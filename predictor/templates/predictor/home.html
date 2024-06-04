@@ -1,0 +1,32 @@
+{% extends 'predictor/base.html' %}
+{% block content %}
+<div
+    class="table-responsive"
+>
+    <table
+        class="table table-primary"
+    >
+        <thead>
+            <tr>
+                <th scope="col" data-sortable="true" data-sorter="alphanum">Ranking</th>
+                <th scope="col" data-sortable="true" data-sorter="alphanum">Name</th>
+                <th scope="col" data-sortable="true" data-sorter="alphanum">Short name</th>
+                <th scope="col" data-sortable="true" data-sorter="alphanum">Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for country in countries %}
+                <tr class="">
+                    <td scope="row">{{country.fifa_ranking}}</td>
+                    <td>{{country.name}}</td>
+                    <td>{{country.short_name}}</td>
+                    <td>{{country.fifa_points}}</td>
+
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock content %}

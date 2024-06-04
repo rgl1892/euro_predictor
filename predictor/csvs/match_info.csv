@@ -1,0 +1,103 @@
+id,date,match_number,stage,home_away,group_id,location,country_id
+1,"2024-06-14 19:00:00",1,Group,Home,1,"Fußball Arena München",16
+2,"2024-06-14 19:00:00",1,Group,Away,1,"Fußball Arena München",39
+3,"2024-06-15 13:00:00",2,Group,Home,1,"Stadion Köln",26
+4,"2024-06-15 13:00:00",2,Group,Away,1,"Stadion Köln",19
+5,"2024-06-15 16:00:00",3,Group,Home,2,"Olympiastadion",8
+6,"2024-06-15 16:00:00",3,Group,Away,2,"Olympiastadion",10
+7,"2024-06-15 19:00:00",4,Group,Home,2,"BVB Stadion Dortmund",9
+8,"2024-06-15 19:00:00",4,Group,Away,2,"BVB Stadion Dortmund",9
+9,"2024-06-16 13:00:00",5,Group,Home,4,"Volksparkstadion",7
+10,"2024-06-16 13:00:00",5,Group,Away,4,"Volksparkstadion",28
+11,"2024-06-16 16:00:00",6,Group,Home,3,"Arena Stuttgart",21
+12,"2024-06-16 16:00:00",6,Group,Away,3,"Arena Stuttgart",57
+13,"2024-06-16 19:00:00",7,Group,Home,3,"Arena AufSchalke",4
+14,"2024-06-16 19:00:00",7,Group,Away,3,"Arena AufSchalke",33
+15,"2024-06-17 13:00:00",8,Group,Home,5,"Fußball Arena München",46
+16,"2024-06-17 13:00:00",8,Group,Away,5,"Fußball Arena München",22
+17,"2024-06-17 16:00:00",9,Group,Home,5,"Frankfurt Stadion",3
+18,"2024-06-17 16:00:00",9,Group,Away,5,"Frankfurt Stadion",48
+19,"2024-06-17 19:00:00",10,Group,Home,4,"Düsseldorf Arena",25
+20,"2024-06-17 19:00:00",10,Group,Away,4,"Düsseldorf Arena",2
+21,"2024-06-18 16:00:00",11,Group,Home,6,"BVB Stadion Dortmund",40
+22,"2024-06-18 16:00:00",11,Group,Away,6,"BVB Stadion Dortmund",40
+23,"2024-06-18 19:00:00",12,Group,Home,6,"RB Arena",36
+24,"2024-06-18 19:00:00",12,Group,Away,6,"RB Arena",6
+25,"2024-06-19 13:00:00",13,Group,Home,2,"Volksparkstadion",66
+26,"2024-06-19 13:00:00",13,Group,Away,2,"Volksparkstadion",10
+27,"2024-06-19 16:00:00",14,Group,Home,1,"Arena Stuttgart",26
+28,"2024-06-19 16:00:00",14,Group,Away,1,"Arena Stuttgart",16
+29,"2024-06-19 19:00:00",15,Group,Home,1,"Stadion Köln",39
+30,"2024-06-19 19:00:00",15,Group,Away,1,"Stadion Köln",19
+31,"2024-06-20 13:00:00",16,Group,Home,3,"Fußball Arena München",57
+32,"2024-06-20 13:00:00",16,Group,Away,3,"Fußball Arena München",33
+33,"2024-06-20 16:00:00",17,Group,Home,3,"Frankfurt Stadion",21
+34,"2024-06-20 16:00:00",17,Group,Away,3,"Frankfurt Stadion",4
+35,"2024-06-20 19:00:00",18,Group,Home,2,"Arena AufSchalke",8
+36,"2024-06-20 19:00:00",18,Group,Away,2,"Arena AufSchalke",8
+37,"2024-06-21 13:00:00",19,Group,Home,5,"Düsseldorf Arena",22
+38,"2024-06-21 13:00:00",19,Group,Away,5,"Düsseldorf Arena",48
+39,"2024-06-21 16:00:00",20,Group,Home,4,"Olympiastadion",25
+40,"2024-06-21 16:00:00",20,Group,Away,4,"Olympiastadion",28
+41,"2024-06-21 19:00:00",21,Group,Home,4,"RB Arena",2
+42,"2024-06-21 19:00:00",21,Group,Away,4,"RB Arena",7
+43,"2024-06-22 13:00:00",22,Group,Home,6,"Volksparkstadion",75
+44,"2024-06-22 13:00:00",22,Group,Away,6,"Volksparkstadion",36
+45,"2024-06-22 16:00:00",23,Group,Home,6,"BVB Stadion Dortmund",40
+46,"2024-06-22 16:00:00",23,Group,Away,6,"BVB Stadion Dortmund",6
+47,"2024-06-22 19:00:00",24,Group,Home,5,"Stadion Köln",3
+48,"2024-06-22 19:00:00",24,Group,Away,5,"Stadion Köln",46
+49,"2024-06-23 19:00:00",25,Group,Home,1,"Frankfurt Stadion",19
+50,"2024-06-23 19:00:00",25,Group,Away,1,"Frankfurt Stadion",19
+51,"2024-06-23 19:00:00",26,Group,Home,1,"Arena Stuttgart",26
+52,"2024-06-23 19:00:00",26,Group,Away,1,"Arena Stuttgart",39
+53,"2024-06-24 19:00:00",27,Group,Home,2,"Düsseldorf Arena",8
+54,"2024-06-24 19:00:00",27,Group,Away,2,"Düsseldorf Arena",66
+55,"2024-06-24 19:00:00",28,Group,Home,2,"RB Arena",9
+56,"2024-06-24 19:00:00",28,Group,Away,2,"RB Arena",10
+57,"2024-06-25 16:00:00",29,Group,Home,4,"Olympiastadion",7
+58,"2024-06-25 16:00:00",29,Group,Away,4,"Olympiastadion",25
+59,"2024-06-25 16:00:00",30,Group,Home,4,"BVB Stadion Dortmund",2
+60,"2024-06-25 16:00:00",30,Group,Away,4,"BVB Stadion Dortmund",28
+61,"2024-06-25 19:00:00",31,Group,Home,3,"Stadion Köln",4
+62,"2024-06-25 19:00:00",31,Group,Away,3,"Stadion Köln",57
+63,"2024-06-25 19:00:00",32,Group,Home,3,"Fußball Arena München",21
+64,"2024-06-25 19:00:00",32,Group,Away,3,"Fußball Arena München",21
+65,"2024-06-26 16:00:00",33,Group,Home,5,"Frankfurt Stadion",46
+66,"2024-06-26 16:00:00",33,Group,Away,5,"Frankfurt Stadion",48
+67,"2024-06-26 16:00:00",34,Group,Home,5,"Arena Stuttgart",3
+68,"2024-06-26 16:00:00",34,Group,Away,5,"Arena Stuttgart",22
+69,"2024-06-26 19:00:00",35,Group,Home,6,"Arena AufSchalke",6
+70,"2024-06-26 19:00:00",35,Group,Away,6,"Arena AufSchalke",75
+71,"2024-06-26 19:00:00",36,Group,Home,6,"Volksparkstadion",36
+72,"2024-06-26 19:00:00",36,Group,Away,6,"Volksparkstadion",40
+73,"2024-06-29 16:00:00",37,Finals,Home,,"Olympiastadion",
+74,"2024-06-29 16:00:00",37,Finals,Away,,"Olympiastadion",
+75,"2024-06-29 19:00:00",38,Finals,Home,,"BVB Stadion Dortmund",
+76,"2024-06-29 19:00:00",38,Finals,Away,,"BVB Stadion Dortmund",
+77,"2024-06-30 16:00:00",39,Finals,Home,,"Arena AufSchalke",
+78,"2024-06-30 16:00:00",39,Finals,Away,,"Arena AufSchalke",
+79,"2024-06-30 19:00:00",40,Finals,Home,,"Stadion Köln",
+80,"2024-06-30 19:00:00",40,Finals,Away,,"Stadion Köln",
+81,"2024-07-01 16:00:00",41,Finals,Home,,"Düsseldorf Arena",
+82,"2024-07-01 16:00:00",41,Finals,Away,,"Düsseldorf Arena",
+83,"2024-07-01 19:00:00",42,Finals,Home,,"Frankfurt Stadion",
+84,"2024-07-01 19:00:00",42,Finals,Away,,"Frankfurt Stadion",
+85,"2024-07-02 16:00:00",43,Finals,Home,,"Fußball Arena München",
+86,"2024-07-02 16:00:00",43,Finals,Away,,"Fußball Arena München",
+87,"2024-07-02 19:00:00",44,Finals,Home,,"RB Arena",
+88,"2024-07-02 19:00:00",44,Finals,Away,,"RB Arena",
+89,"2024-07-05 16:00:00",45,Finals,Home,,"Arena Stuttgart",
+90,"2024-07-05 16:00:00",45,Finals,Away,,"Arena Stuttgart",
+91,"2024-07-05 19:00:00",46,Finals,Home,,"Volksparkstadion",
+92,"2024-07-05 19:00:00",46,Finals,Away,,"Volksparkstadion",
+93,"2024-07-06 16:00:00",47,Finals,Home,,"Düsseldorf Arena",
+94,"2024-07-06 16:00:00",47,Finals,Away,,"Düsseldorf Arena",
+95,"2024-07-06 19:00:00",48,Finals,Home,,"Olympiastadion",
+96,"2024-07-06 19:00:00",48,Finals,Away,,"Olympiastadion",
+97,"2024-07-09 19:00:00",49,Finals,Home,,"Fußball Arena München",
+98,"2024-07-09 19:00:00",49,Finals,Away,,"Fußball Arena München",
+99,"2024-07-10 19:00:00",50,Finals,Home,,"BVB Stadion Dortmund",
+100,"2024-07-10 19:00:00",50,Finals,Away,,"BVB Stadion Dortmund",
+101,"2024-07-14 19:00:00",51,Finals,Home,,"Olympiastadion",
+102,"2024-07-14 19:00:00",51,Finals,Away,,"Olympiastadion",
