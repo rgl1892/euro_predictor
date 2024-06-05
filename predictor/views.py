@@ -7,6 +7,11 @@ from django.db import IntegrityError
 from .forms import EditAuthForm,EditUserForm
 from .models import Country,Group,Match,Prediction
 
+def create_user_predictions(request):
+    matches = Match.objects.all()
+    for item in matches:
+        Prediction.objects.create(match_choice=item,score=None,score_aet=None,penalties=None,result=None,user=request.user)
+
 
 class Home(View):
 
@@ -17,6 +22,7 @@ class Home(View):
         context = {
             'countries':countries
         }
+        
         return render(request, self.template_name, context)
 
 
@@ -32,6 +38,7 @@ def signUpUser(request):
                     request.POST['username'], password=request.POST['password1'])
                 user.save()
                 login(request, user)
+                create_user_predictions(request)
                 return redirect('homepage')
             except IntegrityError:
                 return render(request, 'predictor/login/signUpUser.html', {'form': EditUserForm(), 'error': 'Username Already Taken'})
@@ -58,3 +65,18 @@ def logInUser(request):
         else:
             login(request, user)
             return redirect('homepage')
+
+class PredictionView(View):
+
+    template_name = 'predictor/prediction/prediction.html'
+
+    def get(self, request):
+        predictions = Prediction.objects.filter(user=request.user)
+        groups = Group.objects.exclude(letter='X')
+        context = {
+            'predictions':predictions,
+            'groups':groups
+        }
+        return render(request,self.template_name,context)
+        
+

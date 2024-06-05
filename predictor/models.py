@@ -22,7 +22,7 @@ class Group(models.Model):
 
 
 class Match(models.Model):
-    country = models.ForeignKey(Country,on_delete=models.CASCADE,blank=True)
+    country = models.ForeignKey(Country,on_delete=models.CASCADE,blank=True,null=True)
     date = models.DateTimeField()
     match_number = models.IntegerField()
     stage = models.CharField(max_length=20)
@@ -42,12 +42,13 @@ class Match(models.Model):
 
 class Prediction(models.Model):
     match_choice = models.ForeignKey(Match,on_delete=models.CASCADE)
-    score_1 = models.IntegerField()
-    score_2 = models.IntegerField()
-    score_1_aet = models.IntegerField()
-    score_2_aet = models.IntegerField()
-    penalties_1 = models.IntegerField()
-    penalties_2 = models.IntegerField()
-    result = models.CharField(max_length=30)
+    score = models.IntegerField(null=True)
+    score_aet = models.IntegerField(null=True)
+    penalties = models.IntegerField(null=True)
+    result = models.CharField(max_length=30,null=True)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user}: {self.match_choice}'
+    
 
