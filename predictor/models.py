@@ -8,6 +8,9 @@ class Country(models.Model):
     fifa_points = models.DecimalField(decimal_places=1,max_digits=6)
     short_name = models.CharField(max_length=23)
 
+    class Meta:
+        verbose_name_plural = "countries"
+
     def __str__(self) -> str:
         return f'{self.name} - {self.short_name}'
 
@@ -26,6 +29,9 @@ class Match(models.Model):
     home_away = models.CharField(max_length=20)
     location = models.CharField(max_length=50,default=None,null=True)
     group = models.ForeignKey(Group, verbose_name=("Group"),on_delete=models.CASCADE,default=None,null=True,blank=True)
+
+    class Meta:
+        verbose_name_plural = "matches"
 
     def __str__(self) -> str:
         try:

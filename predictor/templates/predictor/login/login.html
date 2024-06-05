@@ -1,0 +1,15 @@
+{% extends 'predictor/base.html' %}
+{% block content%}
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+{{error}}
+<form method="POST" class="login">
+    {% csrf_token %}
+    {{form}}
+    <input class="btn btn-outline-warning " type="submit" value="Log In">
+</form>
+</div></div>
+
+
+{% endblock %}
