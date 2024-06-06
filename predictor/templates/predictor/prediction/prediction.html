@@ -1,19 +1,58 @@
 {% extends 'predictor/base.html' %}
 {% block content %}
 <div class="container">
-
     {% for group in groups %}
-    {% for prediction in predictions %}
-    
-    {% if prediction.match_choice.group.letter == group.letter %}
-    
-    {{prediction}}
+    <div class="row">
+        <h2>{{group}}</h2>
+        <div class="col-8">
+            <div class="row">
+                
 
-    {% endif %}
+                {% for number in match_numbers %}
 
+
+                {% for prediction in predictions %}
+                {% if prediction.match_choice.match_number == number and prediction.match_choice.group.letter == group.letter %}
+
+                {% if prediction.match_choice.home_away == 'Home' %}
+                <div class="col-3">
+                    {{prediction.match_choice.date}}
+                </div>
+                <div class="col-2 d-flex justify-content-end">
+                    <h5>    
+                        {{prediction.match_choice.country.name}}
+                    </h5>
+                </div>
+                <input class="col-1" type=text>
+
+                </input>
+                
+                {% elif prediction.match_choice.home_away == 'Away'%}
+                <input class="col-1" type=text>
+
+                </input>
+                <div class="col-2">
+                    <h5>
+                    {{prediction.match_choice.country.name}}
+                </h5>
+                </div>
+                <div class="col-3">
+                    {{prediction.match_choice.location}}
+                </div>
+                {% endif %}
+
+
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+
+            </div>
+            
+        </div>
+        <div class="col-4">Java Table goes here</div>
+    </div>
+    <hr class="border  border-2 opacity-100">
     {% endfor %}
-    <br>
-    {% endfor %}
-    
+
 </div>
 {% endblock content %}

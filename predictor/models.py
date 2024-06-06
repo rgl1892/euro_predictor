@@ -19,19 +19,25 @@ class Group(models.Model):
 
     def __str__(self) -> str:
         return f'Group {self.letter}'
-
-
+    
 class Match(models.Model):
+
+    match_number = models.IntegerField()
+
+    def __str__(self) -> str:
+        return f'{self.match_number}'
+
+    class Meta:
+        verbose_name_plural = "matches"
+
+class Score(models.Model):
     country = models.ForeignKey(Country,on_delete=models.CASCADE,blank=True,null=True)
     date = models.DateTimeField()
-    match_number = models.IntegerField()
+    match_number = models.ForeignKey(Match,on_delete=models.CASCADE)
     stage = models.CharField(max_length=20)
     home_away = models.CharField(max_length=20)
     location = models.CharField(max_length=50,default=None,null=True)
     group = models.ForeignKey(Group, verbose_name=("Group"),on_delete=models.CASCADE,default=None,null=True,blank=True)
-
-    class Meta:
-        verbose_name_plural = "matches"
 
     def __str__(self) -> str:
         try:
@@ -41,7 +47,7 @@ class Match(models.Model):
         return name
 
 class Prediction(models.Model):
-    match_choice = models.ForeignKey(Match,on_delete=models.CASCADE)
+    match_choice = models.ForeignKey(Score,on_delete=models.CASCADE)
     score = models.IntegerField(null=True)
     score_aet = models.IntegerField(null=True)
     penalties = models.IntegerField(null=True)

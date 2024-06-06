@@ -5,12 +5,15 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 
 from .forms import EditAuthForm,EditUserForm
-from .models import Country,Group,Match,Prediction
+from .models import Country,Group,Score,Prediction,Match
 
 def create_user_predictions(request):
-    matches = Match.objects.all()
+    matches = Score.objects.all()
     for item in matches:
         Prediction.objects.create(match_choice=item,score=None,score_aet=None,penalties=None,result=None,user=request.user)
+
+def create_51_matches():
+    Match.objects.create(match_number=51)
 
 
 class Home(View):
@@ -73,9 +76,11 @@ class PredictionView(View):
     def get(self, request):
         predictions = Prediction.objects.filter(user=request.user)
         groups = Group.objects.exclude(letter='X')
+        match_numbers = Match.objects.all()
         context = {
             'predictions':predictions,
-            'groups':groups
+            'groups':groups,
+            'match_numbers':match_numbers
         }
         return render(request,self.template_name,context)
         
