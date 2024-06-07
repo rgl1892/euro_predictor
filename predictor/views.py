@@ -13,7 +13,7 @@ def create_user_predictions(request):
         Prediction.objects.create(match_choice=item,score=None,score_aet=None,penalties=None,result=None,user=request.user)
 
 def create_51_matches():
-    Match.objects.create(match_number=51)
+    [Match.objects.create(match_number=x+3,id=x+3) for x in range(51)]
 
 
 class Home(View):
@@ -21,6 +21,7 @@ class Home(View):
     template_name = 'predictor/home.html'
 
     def get(self, request):
+        # create_user_predictions(request)
         countries = Country.objects.order_by('fifa_ranking')
         context = {
             'countries':countries

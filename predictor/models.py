@@ -43,7 +43,7 @@ class Score(models.Model):
         try:
             name = f'Match {self.match_number} {self.country.short_name}'
         except:
-            name = f'Match {self.match_number}'
+            name = f'Match {self.match_number} {self.home_away}'
         return name
 
 class Prediction(models.Model):
@@ -53,6 +53,7 @@ class Prediction(models.Model):
     penalties = models.IntegerField(null=True)
     result = models.CharField(max_length=30,null=True)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
+    points = models.IntegerField(null=True)
 
     def __str__(self):
         return f'{self.user}: {self.match_choice}'
