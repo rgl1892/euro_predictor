@@ -20,11 +20,12 @@
     <thead>
         <tr>
             <th class="col-2" scope="col">Date</th>
-            <th class="d-flex justify-content-end" scope="col">Home</th>
+            <th class="col-2 justify-content-end" scope="col">Home</th>
             <th class="col-2" scope="col">Score</th>
             <th class="col-2" scope="col">Score</th>
-            <th scope="col">Away</th>
+            <th scope="col-2">Away</th>
             <th class="col-2" scope="col">Location</th>
+            <th class="col-2" scope="col">Your points</th>
         </tr>
     </thead>
     <tbody>
@@ -36,6 +37,8 @@
                 <td><input class="form-control" type="number" name="{{match.1.match_choice.id}}" id="{{match.1.match_choice}}" min=0 value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}"></td>
                 <td>{{match.1.match_choice.country.name}}</td>
                 <td>{{match.1.match_choice.location}}</td>
+                <td>{% if match.0.points != None %}{{match.0.points}}{% else %}{% endif %}</td>
+
                 
             </tr>
             {% endfor %}
@@ -102,7 +105,6 @@
             <th scope="col">For</th>
             <th scope="col">Against</th>
             <th scope="col">Points</th>
-            <th scope="col">Ranking</th>
             </tr>
         </thead>
         <tbody>
@@ -115,7 +117,6 @@
                 <td>{{row.goals_for}}</td>
                 <td>{{row.goals_against}}</td>
                 <td>{{row.points}}</td>
-                <td>{{row.ranking}}</td>
             </tr>
             {% endfor %}
             

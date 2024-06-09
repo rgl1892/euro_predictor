@@ -10,7 +10,7 @@ from .models import Country,Group,Score,Prediction,Match
 def create_user_predictions(request):
     matches = Score.objects.all()
     for item in matches:
-        Prediction.objects.create(match_choice=item,score=None,score_aet=None,penalties=None,result=None,user=request.user)
+        Prediction.objects.create(match_choice=item,score=None,score_aet=None,penalties=None,result=None,user=request.user,country=str(item.country.name))
 
 def create_51_matches():
     [Match.objects.create(match_number=x+3,id=x+3) for x in range(51)]
@@ -20,10 +20,7 @@ class Home(View):
 
     template_name = 'predictor/home.html'
 
-    def get(self, request):
-        # create_user_predictions(request)
-        
-        
+    def get(self, request):    
 
         return render(request, self.template_name)
 
@@ -145,5 +142,8 @@ class PredictionView(View):
                 else:
                     Prediction.objects.filter(match_choice=x,user=request.user).update(score=None)
         context = get_group_tables(request)
+        pred = Prediction.objects.filter(user=request.user).exclude(score__isnull=True).exclude(match_choice__group__letter__isnull=True)
+        if len(pred) == 72:
+            Prediction.objects.filter(user=request.user,match_choice__match_number=37)
         return render(request,self.template_name,context)
     

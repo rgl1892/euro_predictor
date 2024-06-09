@@ -31,13 +31,13 @@ class Match(models.Model):
         verbose_name_plural = "matches"
 
 class Score(models.Model):
-    country = models.ForeignKey(Country,on_delete=models.CASCADE,blank=True,null=True)
+    country = models.ForeignKey(Country,on_delete=models.CASCADE,blank=True,null=True,default=211)
     date = models.DateTimeField()
     match_number = models.ForeignKey(Match,on_delete=models.CASCADE)
     stage = models.CharField(max_length=20)
     home_away = models.CharField(max_length=20)
     location = models.CharField(max_length=50,default=None,null=True)
-    group = models.ForeignKey(Group, verbose_name=("Group"),on_delete=models.CASCADE,default=None,null=True,blank=True)
+    group = models.ForeignKey(Group, verbose_name=("Group"),on_delete=models.CASCADE,null=True,blank=True)
 
     def __str__(self) -> str:
         try:
@@ -47,6 +47,7 @@ class Score(models.Model):
         return name
 
 class Prediction(models.Model):
+    country = models.CharField(max_length=50,default=None,null=True)
     match_choice = models.ForeignKey(Score,on_delete=models.CASCADE)
     score = models.IntegerField(null=True)
     score_aet = models.IntegerField(null=True)
