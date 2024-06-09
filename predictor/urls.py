@@ -9,5 +9,6 @@ urlpatterns = [
     path('login',views.logInUser,name='login'),
     path('logout',views.logOutUser,name='logout'),
     path('sign_up_user', views.signUpUser,name='sign_up_user'),
-    path('prediction_entry',views.PredictionView.as_view(),name='prediction_entry')
+    path('group_entry',views.PredictionView.as_view(),name='group_entry'),
+    path('third_place',views.ThirdPlaceView.as_view(),name='third_place')
 ]

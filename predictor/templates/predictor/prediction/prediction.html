@@ -1,58 +1,92 @@
 {% extends 'predictor/base.html' %}
 {% block content %}
+{% load static %}
 <div class="container">
-    {% for group in groups %}
-    <div class="row">
-        <h2>{{group}}</h2>
-        <div class="col-8">
-            <div class="row">
+    
+        <form action="{% url 'group_entry' %}" method="post">
+            {% csrf_token %}
                 
-
-                {% for number in match_numbers %}
-
-
-                {% for prediction in predictions %}
-                {% if prediction.match_choice.match_number == number and prediction.match_choice.group.letter == group.letter %}
-
-                {% if prediction.match_choice.home_away == 'Home' %}
-                <div class="col-3">
-                    {{prediction.match_choice.date}}
-                </div>
-                <div class="col-2 d-flex justify-content-end">
-                    <h5>    
-                        {{prediction.match_choice.country.name}}
-                    </h5>
-                </div>
-                <input class="col-1" type=text id="{{group.letter}}-{{prediction.match_choice.country.short_name}}-{{number}}">
-
-                </input>
                 
-                {% elif prediction.match_choice.home_away == 'Away'%}
-                <input class="col-1" type=text>
-
-                </input>
-                <div class="col-2">
-                    <h5>
-                    {{prediction.match_choice.country.name}}
-                </h5>
-                </div>
-                <div class="col-3">
-                    {{prediction.match_choice.location}}
-                </div>
-                {% endif %}
-
-
-                {% endif %}
-                {% endfor %}
-                {% endfor %}
-
-            </div>
+        {% for group in grouped %}
+        <div class="row">
+        <h1>{{group.0.0.match_choice.group}}</h1>
+        <div class="col-6">
+        <div
+        class="table-responsive"
+    >
+    <table
+    class="table table-primary"
+    >
+    <thead>
+        <tr>
+            <th class="col-2" scope="col">Date</th>
+            <th class="d-flex justify-content-end" scope="col">Home</th>
+            <th class="col-2" scope="col">Score</th>
+            <th class="col-2" scope="col">Score</th>
+            <th scope="col">Away</th>
+            <th class="col-2" scope="col">Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for match in group %}
+            <tr class="">
+                <td>{{match.0.match_choice.date|date:"D d M Y H:s e"}}</td>
+                <td class="text-end">{{match.0.match_choice.country.name}}</td>
+                <td><input class="form-control" type="number" name="{{match.0.match_choice.id}}" id="{{match.0.match_choice}}" min=0 value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}"></td>
+                <td><input class="form-control" type="number" name="{{match.1.match_choice.id}}" id="{{match.1.match_choice}}" min=0 value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}"></td>
+                <td>{{match.1.match_choice.country.name}}</td>
+                <td>{{match.1.match_choice.location}}</td>
+                
+            </tr>
+            {% endfor %}
             
-        </div>
-        <div class="col-4">Java Table goes here</div>
-    </div>
-    <hr class="border  border-2 opacity-100">
-    {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+<div class="col-6">
+    <table
+    class="table table-primary"
+    >
+    <thead>
+        <tr>
+            <th scope="col">Country</th>
+            <th scope="col">Win</th>
+            <th scope="col">Loss</th>
+            <th scope="col">Draw</th>
+            <th scope="col">For</th>
+            <th scope="col">Against</th>
+            <th scope="col">Points</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for result in stuff|slice:forloop.counter|last %}
+    <tr>
+
+        <td>{{result.country}}</td>
+        <td>{{result.wins}}</td>
+        <td>{{result.losses}}</td>
+        <td>{{result.draws}}</td>
+        <td>{{result.goals_for}}</td>
+        <td>{{result.goals_against}}</td>
+        <td>{{result.points}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+    <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Show table
+                </button>
+    
+</div>
+</div>
+{% endfor %}
+</form>
+
 
 </div>
 {% endblock content %}
+
