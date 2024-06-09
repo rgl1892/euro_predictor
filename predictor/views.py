@@ -22,13 +22,22 @@ class Home(View):
 
     def get(self, request):
         # create_user_predictions(request)
+        
+        
+
+        return render(request, self.template_name)
+
+class WorldRankings(View):
+    template_name = 'predictor/world_rankings.html'
+    def get(self, request):
+        # create_user_predictions(request)
         countries = Country.objects.order_by('fifa_ranking')
         context = {
             'countries':countries
         }
         
-        return render(request, self.template_name, context)
 
+        return render(request, self.template_name, context)
 
 def signUpUser(request):
     if request.method == 'GET':
@@ -69,119 +78,72 @@ def logInUser(request):
         else:
             login(request, user)
             return redirect('homepage')
+        
+def get_group_tables(request):
+    groups = Group.objects.all()
+    matches = Match.objects.all()
+    scores = Prediction.objects.filter(user=request.user).order_by('match_choice__match_number')
+    grouped = [[[score for score in scores.filter(match_choice__match_number=event)] for event in matches.filter(score__group=group)][::2] for group in groups]
+    country = {}
+    for group in grouped:
+        for event in group:
+            country[f'{event[0].match_choice.country.name}'] =  {'country':event[0].match_choice.country.name,'wins':0,'losses':0, 'draws':0, 'goals_for':0,'goals_against':0,'group':event[0].match_choice.group.letter,'fifa':event[0].match_choice.country.fifa_points}
+    for group in grouped:
+        for event in group:
+            try:
+                if event[0].score > event[1].score:
+                    country[f'{event[0].match_choice.country.name}']['wins'] += 1
+                    country[f'{event[1].match_choice.country.name}']['losses'] += 1
+                elif event[0].score < event[1].score:
+                    country[f'{event[1].match_choice.country.name}']['wins'] += 1
+                    country[f'{event[0].match_choice.country.name}']['losses'] += 1
+                else:
+                    country[f'{event[0].match_choice.country.name}']['draws'] += 1
+                    country[f'{event[1].match_choice.country.name}']['draws'] += 1
+                country[f'{event[0].match_choice.country.name}']['goals_for'] += event[0].score
+                country[f'{event[1].match_choice.country.name}']['goals_for'] += event[1].score
+                country[f'{event[0].match_choice.country.name}']['goals_against'] += event[1].score
+                country[f'{event[1].match_choice.country.name}']['goals_against'] += event[0].score
+            except:
+                continue
+    for item in country:
+        country[item]['points'] = country[item]['wins'] * 3 + country[item]['draws']
+        country[item]['ranking'] = country[item]['points'] + (country[item]['goals_for'] - country[item]['goals_against'])*0.01 + (country[item]['goals_for'])*0.0001 + float(country[item]['fifa'])* 0.000000001
+    group_letters = ['A','B','C','D','E','F']
+    grouped_tour = []
+    for group in group_letters:
+        group_team = []
+        for row in country:
+            if country[row]['group'] == group:
+                group_team.append(country[row])
+        grouped_tour.append(group_team)
+
+    stuff = [sorted(row,key = lambda x: x['ranking'],reverse=True) for row in grouped_tour]
+    third_teams = [row[2] for row in stuff]
+    best_thirds = sorted(third_teams ,key= lambda x: x['ranking'],reverse=True)
+    context = {
+            'grouped':grouped,
+            'stuff':stuff,
+            'best_thirds': best_thirds
+        }
+    return context
+
 
 class PredictionView(View):
 
     template_name = 'predictor/prediction/prediction.html'
 
     def get(self, request):
-        groups = Group.objects.all()
-        matches = Match.objects.all()
-        scores = Prediction.objects.filter(user=request.user).order_by('match_choice__match_number')
-        grouped = [[[score for score in scores.filter(match_choice__match_number=event)] for event in matches.filter(score__group=group)][::2] for group in groups]
-        country = {}
-        for group in grouped:
-            for event in group:
-                country[f'{event[0].match_choice.country.name}'] =  {'country':event[0].match_choice.country.name,'wins':0,'losses':0, 'draws':0, 'goals_for':0,'goals_against':0,'group':event[0].match_choice.group.letter,'fifa':event[0].match_choice.country.fifa_points}
-        for group in grouped:
-            for event in group:
-                try:
-                    if event[0].score > event[1].score:
-                        country[f'{event[0].match_choice.country.name}']['wins'] += 1
-                        country[f'{event[1].match_choice.country.name}']['losses'] += 1
-                    elif event[0].score < event[1].score:
-                        country[f'{event[1].match_choice.country.name}']['wins'] += 1
-                        country[f'{event[0].match_choice.country.name}']['losses'] += 1
-                    else:
-                        country[f'{event[0].match_choice.country.name}']['draws'] += 1
-                        country[f'{event[1].match_choice.country.name}']['draws'] += 1
-                    country[f'{event[0].match_choice.country.name}']['goals_for'] += event[0].score
-                    country[f'{event[1].match_choice.country.name}']['goals_for'] += event[1].score
-                    country[f'{event[0].match_choice.country.name}']['goals_against'] += event[1].score
-                    country[f'{event[1].match_choice.country.name}']['goals_against'] += event[0].score
-                except:
-                    continue
-        for item in country:
-           country[item]['points'] = country[item]['wins'] * 3 + country[item]['draws']
-           country[item]['ranking'] = country[item]['points'] + (country[item]['goals_for'] - country[item]['goals_against'])*0.1 + (country[item]['goals_for'])*0.01 + float(country[item]['fifa'])* 0.000001
-        group_letters = ['A','B','C','D','E','F']
-        grouped_tour = []
-        for group in group_letters:
-            group_team = []
-            for row in country:
-                if country[row]['group'] == group:
-                    group_team.append(country[row])
-            grouped_tour.append(group_team)
-
-        stuff = [sorted(row,key = lambda x: x['ranking'],reverse=True) for row in grouped_tour]
-
-        
-        context = {
-            'grouped':grouped,
-            'stuff':stuff
-        }
+        context = get_group_tables(request)
         return render(request,self.template_name,context)
     
     def post(self, request):
-        groups = Group.objects.all()
-        matches = Match.objects.all()
-        scores = Prediction.objects.filter(user=request.user).order_by('match_choice__match_number')
-        
         for x in request.POST:
             if x != 'csrfmiddlewaretoken':
                 if request.POST[f'{x}'] != '':
                     Prediction.objects.filter(match_choice=x,user=request.user).update(score=request.POST[f'{x}'])
                 else:
                     Prediction.objects.filter(match_choice=x,user=request.user).update(score=None)
-        grouped = [[[score for score in scores.filter(match_choice__match_number=event)] for event in matches.filter(score__group=group)][::2] for group in groups]
-        country = {}
-        for group in grouped:
-            for event in group:
-                country[f'{event[0].match_choice.country.name}'] =  {'country':event[0].match_choice.country.name,'wins':0,'losses':0, 'draws':0, 'goals_for':0,'goals_against':0,'group':event[0].match_choice.group.letter,'fifa':event[0].match_choice.country.fifa_points}
-        for group in grouped:
-            for event in group:
-                try:
-                    if event[0].score > event[1].score:
-                        country[f'{event[0].match_choice.country.name}']['wins'] += 1
-                        country[f'{event[1].match_choice.country.name}']['losses'] += 1
-                    elif event[0].score < event[1].score:
-                        country[f'{event[1].match_choice.country.name}']['wins'] += 1
-                        country[f'{event[0].match_choice.country.name}']['losses'] += 1
-                    else:
-                        country[f'{event[0].match_choice.country.name}']['draws'] += 1
-                        country[f'{event[1].match_choice.country.name}']['draws'] += 1
-                    country[f'{event[0].match_choice.country.name}']['goals_for'] += event[0].score
-                    country[f'{event[1].match_choice.country.name}']['goals_for'] += event[1].score
-                    country[f'{event[0].match_choice.country.name}']['goals_against'] += event[1].score
-                    country[f'{event[1].match_choice.country.name}']['goals_against'] += event[0].score
-                except:
-                    continue
-        for item in country:
-           country[item]['points'] = country[item]['wins'] * 3 + country[item]['draws']
-           country[item]['ranking'] = country[item]['points'] + (country[item]['goals_for'] - country[item]['goals_against'])*0.1 + (country[item]['goals_for'])*0.01 + float(country[item]['fifa'])* 0.000001
-        group_letters = ['A','B','C','D','E','F']
-        grouped_tour = []
-        for group in group_letters:
-            group_team = []
-            for row in country:
-                if country[row]['group'] == group:
-                    group_team.append(country[row])
-            grouped_tour.append(group_team)
-
-        stuff = [sorted(row,key = lambda x: x['ranking'],reverse=True) for row in grouped_tour]
-
-        context = {
-            'grouped':grouped,
-            'stuff':stuff
-        }
+        context = get_group_tables(request)
         return render(request,self.template_name,context)
     
-class ThirdPlaceView(View):
-
-    template_name = 'predictor/third_place.html'
-        
-    def get(self,request):
-        context = {
-            
-        }
-        return render(request,self.template_name,context)

@@ -85,8 +85,46 @@
 </div>
 {% endfor %}
 </form>
-
+<div class="row">
+    <h2>Best Third Place Teams</h2>
+<div
+    class="table-responsive"
+>
+    <table
+        class="table table-primary"
+    >
+        <thead>
+            <tr>
+                <th scope="col">Country</th>
+            <th scope="col">Win</th>
+            <th scope="col">Loss</th>
+            <th scope="col">Draw</th>
+            <th scope="col">For</th>
+            <th scope="col">Against</th>
+            <th scope="col">Points</th>
+            <th scope="col">Ranking</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in best_thirds %}
+            <tr class="">
+                <td>{{row.country}}</td>
+                <td>{{row.wins}}</td>
+                <td>{{row.losses}}</td>
+                <td>{{row.draws}}</td>
+                <td>{{row.goals_for}}</td>
+                <td>{{row.goals_against}}</td>
+                <td>{{row.points}}</td>
+                <td>{{row.ranking}}</td>
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</div>
+</div>
 
 </div>
+
 {% endblock content %}
 

@@ -34,8 +34,16 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="{% url 'homepage' %}" aria-current="page"
                             >Home
-                            <span class="visually-hidden">(current)</span></a
+                            </a
                         >
+                        
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'world_rankings' %}" aria-current="page"
+                            >World Rankings
+                            </a
+                        >
+                        
                     </li>
                     
                     {% if user.is_authenticated %}
@@ -54,8 +62,7 @@
                             aria-labelledby="dropdownId"
                         >
                         <a class="nav-link" href="{% url 'group_entry' %}">Group Stage</a>
-                        <a class="nav-link" href="{% url 'third_place' %}">Best Third Place</a>
-                        <a class="nav-link" href="{% url 'third_place' %}">Finals</a>
+                        <a class="nav-link" href="{% url 'group_entry' %}">Finals</a>
                         </div>
                         {% endif %}
                     </li>
