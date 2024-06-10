@@ -3,7 +3,7 @@
 {% load static %}
 <div class="container">
     
-        <form action="{% url 'group_entry' %}" method="post">
+        <form action="{% url 'actual_entry' %}" method="post">
             {% csrf_token %}
                 
                 
@@ -129,7 +129,7 @@
 </div>
 </div>
 <hr class="border  border-2 opacity-100">
-<form action="{% url 'group_entry' %}" method="post">
+<form action="{% url 'actual_entry' %}" method="post">
 {% csrf_token %}
     <div class="row">
         <h2 id="knockouts">Knockouts</h2>
@@ -239,7 +239,7 @@
 </div>
 </form>
 <hr class="border  border-2 opacity-100">
-<form action="{% url 'group_entry' %}" method="post">
+<form action="{% url 'actual_entry' %}" method="post">
     {% csrf_token %}
         <div class="row">
             <h4>Quarter Finals</h4>
@@ -348,7 +348,7 @@
     </div>
     </form>
     <hr class="border  border-2 opacity-100">
-<form action="{% url 'group_entry' %}" method="post">
+<form action="{% url 'actual_entry' %}" method="post">
     {% csrf_token %}
         <div class="row">
             <h4>Semi Finals</h4>
@@ -457,7 +457,7 @@
     </div>
     </form>
     <hr class="border  border-2 opacity-100">
-    <form action="{% url 'group_entry' %}" method="post">
+    <form action="{% url 'actual_entry' %}" method="post">
         {% csrf_token %}
             <div class="row">
                 <h4>Finals</h4>

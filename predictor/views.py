@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 
 from .forms import EditAuthForm,EditUserForm
-from .models import Country,Group,Score,Prediction,Match
+from .models import Country,Group,Score,Prediction,Match,Winner
 
 def create_user_predictions(request):
     matches = Score.objects.all()
@@ -15,13 +15,37 @@ def create_user_predictions(request):
 def create_51_matches():
     [Match.objects.create(match_number=x+3,id=x+3) for x in range(51)]
 
+def check_user_points(request):
 
+    filled_in_scores = Prediction.objects.filter(actual='Actual').exclude(score__isnull=True)
+    per_match = [[item for item in Prediction.objects.filter(actual='Actual',match_choice__match_number=x).exclude(score__isnull=True)] for x in range(1,51)]
+    users = User.objects.exclude(username='Actual_Scores')
+    per_match_users =[[[item for item in Prediction.objects.filter(user=user,match_choice__match_number=x).exclude(score__isnull=True)] for x in range(1,51)] for user in users]
+    for user_row in per_match_users:
+        for index,matches in enumerate(user_row):
+            if per_match[index] != []:
+                points = 0
+                if matches[0].score > matches[1].score and per_match[index][0].score > per_match[index][1].score or matches[0].score < matches[1].score and per_match[index][0].score < per_match[index][1].score:
+                    points += 1
+                    print('right result')
+                if matches[0].score - matches[1].score == per_match[index][0].score - per_match[index][1].score:
+                    points += 1
+                    print('right goal diff')
+                if matches[0].score == per_match[index][0].score and matches[1].score == per_match[index][1].score:
+                    points += 2
+                    print('exact')
+                matches[0].points = points
+                matches[1].points = points
+                matches[0].save()
+                matches[1].save()
+
+    
 class Home(View):
 
     template_name = 'predictor/home.html'
 
     def get(self, request):    
-
+        
         return render(request, self.template_name)
 
 class WorldRankings(View):
@@ -129,6 +153,14 @@ def get_group_tables(request):
             'best_thirds': best_thirds,
             'third_groups':third_groups,
         }
+    
+    final_matches = Score.objects.filter(stage='Finals')
+    now_preds = [[item for item in Prediction.objects.filter(user=request.user,match_choice__match_number=match_item.match_number)] for match_item in final_matches][::2]
+        
+    context['now_preds'] = now_preds[:8]
+    context['quarters'] = now_preds[8:12]
+    context['semis'] = now_preds[12:14]
+    context['final'] = [now_preds[14]]
     return context
 
 
@@ -138,63 +170,469 @@ class PredictionView(View):
 
     def get(self, request):
         context = get_group_tables(request)
-        now_preds = Prediction.objects.filter(user=request.user,match_choice__stage='Finals')
-        context['now_preds'] = now_preds
         return render(request,self.template_name,context)
     
     def post(self, request):
-        for x in request.POST:
-            if x != 'csrfmiddlewaretoken':
-                if request.POST[f'{x}'] != '':
-                    Prediction.objects.filter(match_choice=x,user=request.user).update(score=request.POST[f'{x}'])
-                else:
-                    Prediction.objects.filter(match_choice=x,user=request.user).update(score=None)
-        context = get_group_tables(request)
-        pred = Prediction.objects.filter(user=request.user).exclude(score__isnull=True).exclude(match_choice__group__letter__isnull=True)
-        third_groups = sorted(context['third_groups'])
-        print(third_groups)
-        options = {
-        "['A', 'B', 'C', 'D']":[1,4,2,3],
-        "['A', 'B', 'C', 'E']":[1,5,2,3],
-        "['A', 'B', 'C', 'F']":[1,6,2,3],
-        "['A', 'B', 'D', 'E']":[4,5,1,2],
-        "['A', 'B', 'D', 'F']":[4,6,1,2],
-        "['A', 'B', 'E', 'F']":[5,6,2,1],
-        "['A', 'C', 'D', 'E']":[5,4,3,1],
-        "['A', 'C', 'D', 'F']":[6,4,3,1],
-        "['A', 'C', 'E', 'F']":[5,6,3,1],
-        "['A', 'D', 'E', 'F']":[5,6,4,1],
-        "['B', 'C', 'D', 'E']":[5,4,2,3],
-        "['B', 'C', 'D', 'F']":[6,4,3,2],
-        "['B', 'C', 'E', 'F']":[6,5,3,2],
-        "['B', 'D', 'E', 'F']":[6,5,4,2],
-        "['C', 'D', 'E', 'F']":[6,5,4,3],
-        }
-        
-        third_teams = options[f'{third_groups}']
-        
-
-        
-        if len(pred) == 72:
-            Prediction.objects.filter(user=request.user,match_choice__match_number=37,match_choice__home_away='Home').update(country=context['stuff'][0][0]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=37,match_choice__home_away='Away').update(country=context['stuff'][2][1]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=38,match_choice__home_away='Home').update(country=context['stuff'][0][1]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=38,match_choice__home_away='Away').update(country=context['stuff'][1][1]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=39,match_choice__home_away='Home').update(country=context['stuff'][1][0]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=39,match_choice__home_away='Away').update(country=context['stuff'][third_teams[0]-1][2]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Home').update(country=context['stuff'][2][0]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Away').update(country=context['stuff'][third_teams[1]-1][2]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Home').update(country=context['stuff'][5][0]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Away').update(country=context['stuff'][third_teams[2]-1][2]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Home').update(country=context['stuff'][3][1]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Away').update(country=context['stuff'][4][1]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Home').update(country=context['stuff'][4][0]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Away').update(country=context['stuff'][third_teams[3]-1][2]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Home').update(country=context['stuff'][3][0]['country'])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Away').update(country=context['stuff'][5][1]['country'])
-
-        now_preds = Prediction.objects.filter(user=request.user,match_choice__stage='Finals')
-        context['now_preds'] = now_preds
+        try:
+            out = request.POST['groups']
+        except:
+            out = False
+        if out == 'groups':
+            print('hi')
+            for x in request.POST:
+                if x != 'csrfmiddlewaretoken' and x!= 'groups':
+                    if request.POST[f'{x}'] != '':
+                        Prediction.objects.filter(match_choice=x,user=request.user).update(score=request.POST[f'{x}'])
+                    else:
+                        Prediction.objects.filter(match_choice=x,user=request.user).update(score=None)
+            context = get_group_tables(request)
+            pred = Prediction.objects.filter(user=request.user).exclude(score__isnull=True).exclude(match_choice__group__letter__isnull=True)
+            third_groups = sorted(context['third_groups'])
+            options = {
+            "['A', 'B', 'C', 'D']":[1,4,2,3],
+            "['A', 'B', 'C', 'E']":[1,5,2,3],
+            "['A', 'B', 'C', 'F']":[1,6,2,3],
+            "['A', 'B', 'D', 'E']":[4,5,1,2],
+            "['A', 'B', 'D', 'F']":[4,6,1,2],
+            "['A', 'B', 'E', 'F']":[5,6,2,1],
+            "['A', 'C', 'D', 'E']":[5,4,3,1],
+            "['A', 'C', 'D', 'F']":[6,4,3,1],
+            "['A', 'C', 'E', 'F']":[5,6,3,1],
+            "['A', 'D', 'E', 'F']":[5,6,4,1],
+            "['B', 'C', 'D', 'E']":[5,4,2,3],
+            "['B', 'C', 'D', 'F']":[6,4,3,2],
+            "['B', 'C', 'E', 'F']":[6,5,3,2],
+            "['B', 'D', 'E', 'F']":[6,5,4,2],
+            "['C', 'D', 'E', 'F']":[6,5,4,3],
+            }
             
+            third_teams = options[f'{third_groups}']
+            
+
+            
+            if len(pred) == 72:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=37,match_choice__home_away='Home').update(country=context['stuff'][0][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=37,match_choice__home_away='Away').update(country=context['stuff'][2][1]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=38,match_choice__home_away='Home').update(country=context['stuff'][0][1]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=38,match_choice__home_away='Away').update(country=context['stuff'][1][1]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=39,match_choice__home_away='Home').update(country=context['stuff'][1][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=39,match_choice__home_away='Away').update(country=context['stuff'][third_teams[0]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Home').update(country=context['stuff'][2][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Away').update(country=context['stuff'][third_teams[1]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Home').update(country=context['stuff'][5][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Away').update(country=context['stuff'][third_teams[2]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Home').update(country=context['stuff'][3][1]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Away').update(country=context['stuff'][4][1]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Home').update(country=context['stuff'][4][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Away').update(country=context['stuff'][third_teams[3]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Home').update(country=context['stuff'][3][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Away').update(country=context['stuff'][5][1]['country'])
+
+        if list(request.POST.keys())[-1] == 'last-16':
+            ids = []
+            for x in dict(request.POST):
+                if x != 'csrfmiddlewaretoken' and x != 'last-16':
+                    ids.append(x[:x.find("-")])
+                    ids = list(set(ids))
+            new_dict = {}
+            for key in request.POST:
+                if request.POST[key] == '':
+                    new_dict[key] = None
+                else:
+                    new_dict[key] = request.POST[key]
+            for x in ids:
+                Prediction.objects.filter(id=x).update(score=new_dict[f'{x}-score'],score_aet=new_dict[f'{x}-aet'],penalties=new_dict[f'{x}-pens'])
+
+            last_16_range = range(37,45)
+            
+            get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=x) for x in last_16_range]
+            winners = []
+            for match_played in get_winners:
+                if match_played[0].penalties:
+                    if match_played[0].score + match_played[0].score_aet*0.01 + match_played[0].penalties*0.0001 > match_played[1].score + match_played[1].score_aet*0.01 + match_played[1].penalties*0.0001:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+                elif match_played[0].score_aet:
+                    if match_played[0].score + match_played[0].score_aet*0.01 > match_played[1].score + match_played[1].score_aet*0.01:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)   
+                else:
+                    if match_played[0].score > match_played[1].score:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+
+            Prediction.objects.filter(user=request.user,match_choice__match_number=45,match_choice__home_away='Home').update(country=winners[2])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=45,match_choice__home_away='Away').update(country=winners[0])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=46,match_choice__home_away='Home').update(country=winners[4])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=46,match_choice__home_away='Away').update(country=winners[5])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=47,match_choice__home_away='Home').update(country=winners[6])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=47,match_choice__home_away='Away').update(country=winners[7])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=48,match_choice__home_away='Home').update(country=winners[3])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=48,match_choice__home_away='Away').update(country=winners[1])
+
+        if list(request.POST.keys())[-1] == 'quarters':
+            ids = []
+            for x in dict(request.POST):
+                if x != 'csrfmiddlewaretoken' and x != 'quarters':
+                    ids.append(x[:x.find("-")])
+                    ids = list(set(ids))
+            new_dict = {}
+            for key in request.POST:
+                if request.POST[key] == '':
+                    new_dict[key] = None
+                else:
+                    new_dict[key] = request.POST[key]
+            for x in ids:
+                Prediction.objects.filter(id=x).update(score=new_dict[f'{x}-score'],score_aet=new_dict[f'{x}-aet'],penalties=new_dict[f'{x}-pens'])
+
+            range_to_use = range(45,49)
+            
+            get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=x) for x in range_to_use]
+            winners = []
+            for match_played in get_winners:
+                if match_played[0].penalties:
+                    if match_played[0].score + match_played[0].score_aet*0.01 + match_played[0].penalties*0.0001 > match_played[1].score + match_played[1].score_aet*0.01 + match_played[1].penalties*0.0001:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+                elif match_played[0].score_aet:
+                    if match_played[0].score + match_played[0].score_aet*0.01 > match_played[1].score + match_played[1].score_aet*0.01:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)   
+                else:
+                    if match_played[0].score > match_played[1].score:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+            Prediction.objects.filter(user=request.user,match_choice__match_number=49,match_choice__home_away='Home').update(country=winners[0])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=49,match_choice__home_away='Away').update(country=winners[1])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=50,match_choice__home_away='Home').update(country=winners[2])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=50,match_choice__home_away='Away').update(country=winners[3])
+        
+        if list(request.POST.keys())[-1] == 'semis':
+            ids = []
+            for x in dict(request.POST):
+                if x != 'csrfmiddlewaretoken' and x != 'semis':
+                    ids.append(x[:x.find("-")])
+                    ids = list(set(ids))
+            new_dict = {}
+            for key in request.POST:
+                if request.POST[key] == '':
+                    new_dict[key] = None
+                else:
+                    new_dict[key] = request.POST[key]
+            for x in ids:
+                Prediction.objects.filter(id=x).update(score=new_dict[f'{x}-score'],score_aet=new_dict[f'{x}-aet'],penalties=new_dict[f'{x}-pens'])
+
+            range_to_use = range(49,51)
+            
+            get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=x) for x in range_to_use]
+            winners = []
+            for match_played in get_winners:
+                if match_played[0].penalties:
+                    if match_played[0].score + match_played[0].score_aet*0.01 + match_played[0].penalties*0.0001 > match_played[1].score + match_played[1].score_aet*0.01 + match_played[1].penalties*0.0001:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+                elif match_played[0].score_aet:
+                    if match_played[0].score + match_played[0].score_aet*0.01 > match_played[1].score + match_played[1].score_aet*0.01:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)   
+                else:
+                    if match_played[0].score > match_played[1].score:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+            Prediction.objects.filter(user=request.user,match_choice__match_number=51,match_choice__home_away='Home').update(country=winners[0])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=51,match_choice__home_away='Away').update(country=winners[1])
+
+
+        if list(request.POST.keys())[-1] == 'final':
+            ids = []
+            for x in dict(request.POST):
+                if x != 'csrfmiddlewaretoken' and x != 'final':
+                    ids.append(x[:x.find("-")])
+                    ids = list(set(ids))
+            new_dict = {}
+            for key in request.POST:
+                if request.POST[key] == '':
+                    new_dict[key] = None
+                else:
+                    new_dict[key] = request.POST[key]
+            for x in ids:
+                Prediction.objects.filter(id=x).update(score=new_dict[f'{x}-score'],score_aet=new_dict[f'{x}-aet'],penalties=new_dict[f'{x}-pens'])
+
+            
+            
+            get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=51)]
+            winners = []
+            for match_played in get_winners:
+                if match_played[0].penalties:
+                    if match_played[0].score + match_played[0].score_aet*0.01 + match_played[0].penalties*0.0001 > match_played[1].score + match_played[1].score_aet*0.01 + match_played[1].penalties*0.0001:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+                elif match_played[0].score_aet:
+                    if match_played[0].score + match_played[0].score_aet*0.01 > match_played[1].score + match_played[1].score_aet*0.01:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)   
+                else:
+                    if match_played[0].score > match_played[1].score:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+                Winner.objects.update_or_create(user=request.user,winner=winners[0])
+
+        context = get_group_tables(request)
+        
+        return render(request,self.template_name,context)
+    
+class WinnersView(View):
+    template_name = 'predictor/summary/winners.html'
+
+    def get(self,request):
+
+        winners_list = Winner.objects.all()
+
+        context = {
+            'winners_list':winners_list
+        }
+
+        return render(request,self.template_name,context)
+
+class ActualView(View):
+
+    template_name = 'predictor/actual/actual.html'
+
+    def get(self, request):
+        check_user_points(request)
+        context = get_group_tables(request)
+        return render(request,self.template_name,context)
+    
+    def post(self, request):
+        
+        try:
+            out = request.POST['groups']
+        except:
+            out = False
+        if out == 'groups':
+            for x in request.POST:
+                if x != 'csrfmiddlewaretoken' and x!= 'groups':
+                    if request.POST[f'{x}'] != '':
+                        Prediction.objects.filter(match_choice=x,user=request.user).update(score=request.POST[f'{x}'])
+                    else:
+                        Prediction.objects.filter(match_choice=x,user=request.user).update(score=None)
+            context = get_group_tables(request)
+            pred = Prediction.objects.filter(user=request.user).exclude(score__isnull=True).exclude(match_choice__group__letter__isnull=True)
+            third_groups = sorted(context['third_groups'])
+            options = {
+            "['A', 'B', 'C', 'D']":[1,4,2,3],
+            "['A', 'B', 'C', 'E']":[1,5,2,3],
+            "['A', 'B', 'C', 'F']":[1,6,2,3],
+            "['A', 'B', 'D', 'E']":[4,5,1,2],
+            "['A', 'B', 'D', 'F']":[4,6,1,2],
+            "['A', 'B', 'E', 'F']":[5,6,2,1],
+            "['A', 'C', 'D', 'E']":[5,4,3,1],
+            "['A', 'C', 'D', 'F']":[6,4,3,1],
+            "['A', 'C', 'E', 'F']":[5,6,3,1],
+            "['A', 'D', 'E', 'F']":[5,6,4,1],
+            "['B', 'C', 'D', 'E']":[5,4,2,3],
+            "['B', 'C', 'D', 'F']":[6,4,3,2],
+            "['B', 'C', 'E', 'F']":[6,5,3,2],
+            "['B', 'D', 'E', 'F']":[6,5,4,2],
+            "['C', 'D', 'E', 'F']":[6,5,4,3],
+            }
+            
+            third_teams = options[f'{third_groups}']
+            
+
+            
+            if len(pred) == 72:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=37,match_choice__home_away='Home').update(country=context['stuff'][0][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=37,match_choice__home_away='Away').update(country=context['stuff'][2][1]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=38,match_choice__home_away='Home').update(country=context['stuff'][0][1]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=38,match_choice__home_away='Away').update(country=context['stuff'][1][1]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=39,match_choice__home_away='Home').update(country=context['stuff'][1][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=39,match_choice__home_away='Away').update(country=context['stuff'][third_teams[0]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Home').update(country=context['stuff'][2][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Away').update(country=context['stuff'][third_teams[1]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Home').update(country=context['stuff'][5][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Away').update(country=context['stuff'][third_teams[2]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Home').update(country=context['stuff'][3][1]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Away').update(country=context['stuff'][4][1]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Home').update(country=context['stuff'][4][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Away').update(country=context['stuff'][third_teams[3]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Home').update(country=context['stuff'][3][0]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Away').update(country=context['stuff'][5][1]['country'])
+
+        if list(request.POST.keys())[-1] == 'last-16':
+            ids = []
+            for x in dict(request.POST):
+                if x != 'csrfmiddlewaretoken' and x != 'last-16':
+                    ids.append(x[:x.find("-")])
+                    ids = list(set(ids))
+            new_dict = {}
+            for key in request.POST:
+                if request.POST[key] == '':
+                    new_dict[key] = None
+                else:
+                    new_dict[key] = request.POST[key]
+            for x in ids:
+                Prediction.objects.filter(id=x).update(score=new_dict[f'{x}-score'],score_aet=new_dict[f'{x}-aet'],penalties=new_dict[f'{x}-pens'])
+
+            last_16_range = range(37,45)
+            
+            get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=x) for x in last_16_range]
+            winners = []
+            for match_played in get_winners:
+                if match_played[0].penalties:
+                    if match_played[0].score + match_played[0].score_aet*0.01 + match_played[0].penalties*0.0001 > match_played[1].score + match_played[1].score_aet*0.01 + match_played[1].penalties*0.0001:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+                elif match_played[0].score_aet:
+                    if match_played[0].score + match_played[0].score_aet*0.01 > match_played[1].score + match_played[1].score_aet*0.01:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)   
+                else:
+                    if match_played[0].score > match_played[1].score:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+
+            Prediction.objects.filter(user=request.user,match_choice__match_number=45,match_choice__home_away='Home').update(country=winners[2])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=45,match_choice__home_away='Away').update(country=winners[0])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=46,match_choice__home_away='Home').update(country=winners[4])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=46,match_choice__home_away='Away').update(country=winners[5])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=47,match_choice__home_away='Home').update(country=winners[6])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=47,match_choice__home_away='Away').update(country=winners[7])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=48,match_choice__home_away='Home').update(country=winners[3])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=48,match_choice__home_away='Away').update(country=winners[1])
+
+        if list(request.POST.keys())[-1] == 'quarters':
+            ids = []
+            for x in dict(request.POST):
+                if x != 'csrfmiddlewaretoken' and x != 'quarters':
+                    ids.append(x[:x.find("-")])
+                    ids = list(set(ids))
+            new_dict = {}
+            for key in request.POST:
+                if request.POST[key] == '':
+                    new_dict[key] = None
+                else:
+                    new_dict[key] = request.POST[key]
+            for x in ids:
+                Prediction.objects.filter(id=x).update(score=new_dict[f'{x}-score'],score_aet=new_dict[f'{x}-aet'],penalties=new_dict[f'{x}-pens'])
+
+            range_to_use = range(45,49)
+            
+            get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=x) for x in range_to_use]
+            winners = []
+            for match_played in get_winners:
+                if match_played[0].penalties:
+                    if match_played[0].score + match_played[0].score_aet*0.01 + match_played[0].penalties*0.0001 > match_played[1].score + match_played[1].score_aet*0.01 + match_played[1].penalties*0.0001:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+                elif match_played[0].score_aet:
+                    if match_played[0].score + match_played[0].score_aet*0.01 > match_played[1].score + match_played[1].score_aet*0.01:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)   
+                else:
+                    if match_played[0].score > match_played[1].score:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+            Prediction.objects.filter(user=request.user,match_choice__match_number=49,match_choice__home_away='Home').update(country=winners[0])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=49,match_choice__home_away='Away').update(country=winners[1])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=50,match_choice__home_away='Home').update(country=winners[2])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=50,match_choice__home_away='Away').update(country=winners[3])
+        
+        if list(request.POST.keys())[-1] == 'semis':
+            ids = []
+            for x in dict(request.POST):
+                if x != 'csrfmiddlewaretoken' and x != 'semis':
+                    ids.append(x[:x.find("-")])
+                    ids = list(set(ids))
+            new_dict = {}
+            for key in request.POST:
+                if request.POST[key] == '':
+                    new_dict[key] = None
+                else:
+                    new_dict[key] = request.POST[key]
+            for x in ids:
+                Prediction.objects.filter(id=x).update(score=new_dict[f'{x}-score'],score_aet=new_dict[f'{x}-aet'],penalties=new_dict[f'{x}-pens'])
+
+            range_to_use = range(49,51)
+            
+            get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=x) for x in range_to_use]
+            winners = []
+            for match_played in get_winners:
+                if match_played[0].penalties:
+                    if match_played[0].score + match_played[0].score_aet*0.01 + match_played[0].penalties*0.0001 > match_played[1].score + match_played[1].score_aet*0.01 + match_played[1].penalties*0.0001:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+                elif match_played[0].score_aet:
+                    if match_played[0].score + match_played[0].score_aet*0.01 > match_played[1].score + match_played[1].score_aet*0.01:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)   
+                else:
+                    if match_played[0].score > match_played[1].score:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+            Prediction.objects.filter(user=request.user,match_choice__match_number=51,match_choice__home_away='Home').update(country=winners[0])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=51,match_choice__home_away='Away').update(country=winners[1])
+
+
+        if list(request.POST.keys())[-1] == 'final':
+            ids = []
+            for x in dict(request.POST):
+                if x != 'csrfmiddlewaretoken' and x != 'final':
+                    ids.append(x[:x.find("-")])
+                    ids = list(set(ids))
+            new_dict = {}
+            for key in request.POST:
+                if request.POST[key] == '':
+                    new_dict[key] = None
+                else:
+                    new_dict[key] = request.POST[key]
+            for x in ids:
+                Prediction.objects.filter(id=x).update(score=new_dict[f'{x}-score'],score_aet=new_dict[f'{x}-aet'],penalties=new_dict[f'{x}-pens'])
+
+            
+            
+            get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=51)]
+            winners = []
+            for match_played in get_winners:
+                if match_played[0].penalties:
+                    if match_played[0].score + match_played[0].score_aet*0.01 + match_played[0].penalties*0.0001 > match_played[1].score + match_played[1].score_aet*0.01 + match_played[1].penalties*0.0001:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+                elif match_played[0].score_aet:
+                    if match_played[0].score + match_played[0].score_aet*0.01 > match_played[1].score + match_played[1].score_aet*0.01:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)   
+                else:
+                    if match_played[0].score > match_played[1].score:
+                        winners.append(match_played[0].country) 
+                    else:
+                        winners.append(match_played[1].country)
+                Winner.objects.update_or_create(user=request.user,winner=winners[0])
+
+        context = get_group_tables(request)
+        
         return render(request,self.template_name,context)
     

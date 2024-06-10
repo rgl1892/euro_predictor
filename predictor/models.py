@@ -49,14 +49,19 @@ class Score(models.Model):
 class Prediction(models.Model):
     country = models.CharField(max_length=50,default=None,null=True)
     match_choice = models.ForeignKey(Score,on_delete=models.CASCADE)
-    score = models.IntegerField(null=True)
-    score_aet = models.IntegerField(null=True)
-    penalties = models.IntegerField(null=True)
+    score = models.IntegerField(null=True,blank=True)
+    score_aet = models.IntegerField(null=True,blank=True)
+    penalties = models.IntegerField(null=True,blank=True)
     result = models.CharField(max_length=30,null=True)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     points = models.IntegerField(null=True)
+    actual = models.CharField(null=True,max_length=50)
 
     def __str__(self):
-        return f'{self.user}: {self.match_choice}'
+        return f'{self.user}: {self.country} {self.match_choice}'
+    
+class Winner(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    winner = models.CharField(max_length=50)
     
 

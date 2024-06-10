@@ -11,4 +11,6 @@ urlpatterns = [
     path('world_rankings',views.WorldRankings.as_view(),name='world_rankings'),
     path('sign_up_user', views.signUpUser,name='sign_up_user'),
     path('group_entry',views.PredictionView.as_view(),name='group_entry'),
+    path('actual_entry',views.ActualView.as_view(),name='actual_entry'),
+    path('winners',views.WinnersView.as_view(),name='winners'),
 ]

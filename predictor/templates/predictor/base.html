@@ -39,12 +39,33 @@
                         
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'group_entry' %}" aria-current="page"
+                            >Make/Edit Predictions
+                            </a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'winners' %}" aria-current="page"
+                            >Winners
+                            </a
+                        >
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'world_rankings' %}" aria-current="page"
                             >World Rankings
                             </a
                         >
                         
+                        
                     </li>
+                    {% if user.username == 'Actual_Scores'%}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'actual_entry' %}" aria-current="page"
+                        >Actual
+                        </a
+                        >
+                    </li>
+                    {% endif %}
                     
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
@@ -55,13 +76,13 @@
                             data-bs-toggle="dropdown"
                             aria-haspopup="true"
                             aria-expanded="false"
-                            >Make/Edit Predictions</a
+                            >Blank</a
                         >
                         <div
                             class="dropdown-menu"
                             aria-labelledby="dropdownId"
                         >
-                        <a class="nav-link" href="{% url 'group_entry' %}">Group Stage</a>
+                        
                         <a class="nav-link" href="{% url 'group_entry' %}">Finals</a>
                         </div>
                         {% endif %}
@@ -69,7 +90,7 @@
                 </ul>
                 <form class="d-flex my-2 my-lg-0">
                     {% if user.is_authenticated %}
-                    <a class="navbar-brand" href="{% url 'logout' %}" class="nav-link active" title="Log Out">Log Out {{user.first_name}} {{user.last_name|first}}</a>
+                    <a class="navbar-brand" href="{% url 'logout' %}" class="nav-link active" title="Log Out">Log Out {{user.username}} {{user.last_name|first}}</a>
                     {% else %}
                     <a class="navbar-brand" href="{% url 'login' %}" class="nav-link active" title="Login">Login</a>
                     <a class="navbar-brand" href="{% url 'sign_up_user' %}" class="nav-link active" title="sign up user">Sign Up</a>
