@@ -1,0 +1,15 @@
+/* .number-input {
+    width: 50px;
+} */
+.table {
+    --bs-table-bg:#BFF6C3;
+}
+.card {
+    background-color:#B0EBB4;
+}
+body {
+    background-color: #ACE1AF;
+}
+h6 {
+    padding-top: 5px;
+}
