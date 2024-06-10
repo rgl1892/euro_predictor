@@ -57,7 +57,7 @@ class Home(View):
     template_name = 'predictor/home.html'
 
     def get(self, request):    
-        users = User.objects.exclude(username='Actual_Scores')
+        users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
         points = [int(sum([item.points for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
         exact = [int(sum([item.exact for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
         
