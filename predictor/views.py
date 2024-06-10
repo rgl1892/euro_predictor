@@ -10,7 +10,7 @@ from .models import Country,Group,Score,Prediction,Match,Winner
 def create_user_predictions(request):
     matches = Score.objects.all()
     for item in matches:
-        Prediction.objects.create(match_choice=item,score=None,score_aet=None,penalties=None,result=None,user=request.user,country=str(item.country.name))
+        Prediction.objects.create(match_choice=item,score=None,score_aet=None,penalties=None,user=request.user,country=str(item.country.name))
 
 def create_51_matches():
     [Match.objects.create(match_number=x+3,id=x+3) for x in range(51)]
