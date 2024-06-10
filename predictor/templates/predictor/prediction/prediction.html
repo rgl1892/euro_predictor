@@ -10,7 +10,7 @@
         {% for group in grouped %}
         <div class="row">
         <h1>{{group.0.0.match_choice.group}}</h1>
-        <div class="col-6">
+        <div class="col-8">
         <div
         class="table-responsive"
     >
@@ -47,7 +47,7 @@
     </table>
 </div>
 </div>
-<div class="col-6">
+<div class="col-4">
     <table
     class="table table-primary"
     >
@@ -105,6 +105,7 @@
             <th scope="col">For</th>
             <th scope="col">Against</th>
             <th scope="col">Points</th>
+            <th scope="col">Group</th>
             </tr>
         </thead>
         <tbody>
@@ -117,6 +118,7 @@
                 <td>{{row.goals_for}}</td>
                 <td>{{row.goals_against}}</td>
                 <td>{{row.points}}</td>
+                <td>{{row.group}}</td>
             </tr>
             {% endfor %}
             
@@ -124,6 +126,14 @@
     </table>
 </div>
 </div>
+
+<div class="row">
+    <h2>Knockouts</h2>
+    <div class="col">
+        {{now_preds.1}}
+    </div>
+</div>
+
 
 </div>
 

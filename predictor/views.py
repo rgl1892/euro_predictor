@@ -117,11 +117,17 @@ def get_group_tables(request):
 
     stuff = [sorted(row,key = lambda x: x['ranking'],reverse=True) for row in grouped_tour]
     third_teams = [row[2] for row in stuff]
+    third_groups = []
+    
     best_thirds = sorted(third_teams ,key= lambda x: x['ranking'],reverse=True)
+    for x in best_thirds[:4]:
+        third_groups.append(x['group'])
+    
     context = {
             'grouped':grouped,
             'stuff':stuff,
-            'best_thirds': best_thirds
+            'best_thirds': best_thirds,
+            'third_groups':third_groups,
         }
     return context
 
@@ -132,6 +138,8 @@ class PredictionView(View):
 
     def get(self, request):
         context = get_group_tables(request)
+        now_preds = Prediction.objects.filter(user=request.user,match_choice__stage='Finals')
+        context['now_preds'] = now_preds
         return render(request,self.template_name,context)
     
     def post(self, request):
@@ -143,7 +151,50 @@ class PredictionView(View):
                     Prediction.objects.filter(match_choice=x,user=request.user).update(score=None)
         context = get_group_tables(request)
         pred = Prediction.objects.filter(user=request.user).exclude(score__isnull=True).exclude(match_choice__group__letter__isnull=True)
+        third_groups = sorted(context['third_groups'])
+        print(third_groups)
+        options = {
+        "['A', 'B', 'C', 'D']":[1,4,2,3],
+        "['A', 'B', 'C', 'E']":[1,5,2,3],
+        "['A', 'B', 'C', 'F']":[1,6,2,3],
+        "['A', 'B', 'D', 'E']":[4,5,1,2],
+        "['A', 'B', 'D', 'F']":[4,6,1,2],
+        "['A', 'B', 'E', 'F']":[5,6,2,1],
+        "['A', 'C', 'D', 'E']":[5,4,3,1],
+        "['A', 'C', 'D', 'F']":[6,4,3,1],
+        "['A', 'C', 'E', 'F']":[5,6,3,1],
+        "['A', 'D', 'E', 'F']":[5,6,4,1],
+        "['B', 'C', 'D', 'E']":[5,4,2,3],
+        "['B', 'C', 'D', 'F']":[6,4,3,2],
+        "['B', 'C', 'E', 'F']":[6,5,3,2],
+        "['B', 'D', 'E', 'F']":[6,5,4,2],
+        "['C', 'D', 'E', 'F']":[6,5,4,3],
+        }
+        
+        third_teams = options[f'{third_groups}']
+        
+
+        
         if len(pred) == 72:
-            Prediction.objects.filter(user=request.user,match_choice__match_number=37)
+            Prediction.objects.filter(user=request.user,match_choice__match_number=37,match_choice__home_away='Home').update(country=context['stuff'][0][0]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=37,match_choice__home_away='Away').update(country=context['stuff'][2][1]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=38,match_choice__home_away='Home').update(country=context['stuff'][0][1]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=38,match_choice__home_away='Away').update(country=context['stuff'][1][1]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=39,match_choice__home_away='Home').update(country=context['stuff'][1][0]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=39,match_choice__home_away='Away').update(country=context['stuff'][third_teams[0]-1][2]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Home').update(country=context['stuff'][2][0]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Away').update(country=context['stuff'][third_teams[1]-1][2]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Home').update(country=context['stuff'][5][0]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Away').update(country=context['stuff'][third_teams[2]-1][2]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Home').update(country=context['stuff'][3][1]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Away').update(country=context['stuff'][4][1]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Home').update(country=context['stuff'][4][0]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Away').update(country=context['stuff'][third_teams[3]-1][2]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Home').update(country=context['stuff'][3][0]['country'])
+            Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Away').update(country=context['stuff'][5][1]['country'])
+
+        now_preds = Prediction.objects.filter(user=request.user,match_choice__stage='Finals')
+        context['now_preds'] = now_preds
+            
         return render(request,self.template_name,context)
     
