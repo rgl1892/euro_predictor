@@ -1,4 +1,50 @@
 {% extends 'predictor/base.html' %}
 {% block content %}
-<h1>Home</h1>
+<div class="container">
+    <div class="row">
+        <div class="col">
+
+            <h3>Points explanation</h3>
+            <p>
+                For a correct result: 1 Point <br>
+                For a correct goal difference: 1 Point <br>
+                For a correct score exactly: 2 Points<br>
+                Total of 4 points for each result<br>
+                <br><br>
+                For the finals an extra point will be given for each country that you get correct<br>
+                Total of 6 points available for final matches
+            </p>
+            
+        </div>
+    </div>
+    <div class="row">
+        <h4>Leaderboard</h4>
+        <div
+            class="table-responsive"
+        >
+            <table
+                class="table table-primary"
+            >
+                <thead>
+                    <tr>
+                        <th scope="col">Username</th>
+                        <th scope="col">Points</th>
+                        <th scope="col">Exact Results</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in leaderboard %}
+                    <tr class="">
+                        <td scope="row">{{row.0}}</td>
+                        <td>{{row.1}}</td>
+                        <td>{{row.2}}</td>
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</div>
 {% endblock content %}

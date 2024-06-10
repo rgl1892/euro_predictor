@@ -25,17 +25,29 @@ def check_user_points(request):
         for index,matches in enumerate(user_row):
             if per_match[index] != []:
                 points = 0
+                exact = 0
                 if matches[0].score > matches[1].score and per_match[index][0].score > per_match[index][1].score or matches[0].score < matches[1].score and per_match[index][0].score < per_match[index][1].score:
                     points += 1
-                    print('right result')
+
                 if matches[0].score - matches[1].score == per_match[index][0].score - per_match[index][1].score:
                     points += 1
-                    print('right goal diff')
+
                 if matches[0].score == per_match[index][0].score and matches[1].score == per_match[index][1].score:
                     points += 2
-                    print('exact')
+                    exact += 1
+                if matches[0].match_choice.stage == 'Finals':
+                    if matches[0].country == per_match[index][0].country:
+                        points +=1
+                    if matches[1].country == per_match[index][1].country:
+                        points +=1
+                    if matches[0].country == per_match[index][1].country:
+                        points +=1
+                    if matches[1].country == per_match[index][0].country:
+                        points +=1
                 matches[0].points = points
                 matches[1].points = points
+                matches[0].exact = exact
+                matches[1 ].exact = exact
                 matches[0].save()
                 matches[1].save()
 
@@ -45,8 +57,18 @@ class Home(View):
     template_name = 'predictor/home.html'
 
     def get(self, request):    
+        users = User.objects.exclude(username='Actual_Scores')
+        points = [int(sum([item.points for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
+        exact = [int(sum([item.exact for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
         
-        return render(request, self.template_name)
+        leaderboard = []
+        for i in range(len(users)):
+            leaderboard.append([users[i],points[i],exact[i]])
+        
+        context = {
+            'leaderboard':leaderboard
+        }
+        return render(request, self.template_name,context)
 
 class WorldRankings(View):
     template_name = 'predictor/world_rankings.html'

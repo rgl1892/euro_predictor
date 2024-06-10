@@ -52,9 +52,9 @@ class Prediction(models.Model):
     score = models.IntegerField(null=True,blank=True)
     score_aet = models.IntegerField(null=True,blank=True)
     penalties = models.IntegerField(null=True,blank=True)
-    result = models.CharField(max_length=30,null=True)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     points = models.IntegerField(null=True)
+    exact = models.IntegerField(null=True)
     actual = models.CharField(null=True,max_length=50)
 
     def __str__(self):
