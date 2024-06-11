@@ -49,9 +49,8 @@ async function get_current_filters() {
     svg.append("g")
       .call(d3.axisLeft(y));
 
-    const myColor = d3.scaleLinear()
-      .range(["#fc8d59","#ffffbf","#91cf60"])
-      .domain([0,home.length/result.length]);
+    const myColor = d3.scaleSequential(d3.interpolatePlasma)
+      .domain([0,d3.max(result,d=>d.count)]);
 
     svg.append("text")
       .attr("class", "x label")
