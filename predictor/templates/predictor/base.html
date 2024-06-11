@@ -17,7 +17,7 @@
         class="navbar navbar-expand-sm navbar-light bg-light"
     >
         <div class="container">
-            <a class="navbar-brand" href="{% url 'homepage' %}">Navbar</a>
+            <a class="navbar-brand" href="{% url 'homepage' %}">Navboctopus</a>
             <button
                 class="navbar-toggler d-lg-none"
                 type="button"
@@ -38,12 +38,14 @@
                         >
                         
                     </li>
+                    {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'group_entry' %}" aria-current="page"
                             >Make/Edit Predictions
                             </a
                         >
                     </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'winners' %}" aria-current="page"
                             >Winners
@@ -76,17 +78,18 @@
                             data-bs-toggle="dropdown"
                             aria-haspopup="true"
                             aria-expanded="false"
-                            >Blank</a
+                            >Stats</a
                         >
                         <div
                             class="dropdown-menu"
                             aria-labelledby="dropdownId"
                         >
                         
-                        <a class="nav-link" href="{% url 'group_entry' %}">Finals</a>
+                        <a class="nav-link" href="#">Work In Progress</a>
                         </div>
-                        {% endif %}
+                        
                     </li>
+                    {% endif %}
                 </ul>
                 <form class="d-flex my-2 my-lg-0">
                     {% if user.is_authenticated %}

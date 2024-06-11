@@ -2,7 +2,6 @@
 {% block content %}
 {% load static %}
 <div class="container">
-    
         <form action="{% url 'group_entry' %}" method="post">
             {% csrf_token %}
                 
@@ -10,7 +9,7 @@
         {% for group in grouped %}
         <div class="row">
         <h1>{{group.0.0.match_choice.group}}</h1>
-        <div class="col-8">
+        <div class="col-12 col-lg-8">
         <div
         class="table-responsive"
     >
@@ -19,24 +18,24 @@
     >
     <thead>
         <tr>
-            <th class="col-2" scope="col">Date</th>
+            <th class="col-2 d-none d-lg-table-cell" scope="col">Date</th>
             <th class="col-2 justify-content-end" scope="col">Home</th>
             <th class="col-2" scope="col">Score</th>
             <th class="col-2" scope="col">Score</th>
             <th scope="col-2">Away</th>
-            <th class="col-2" scope="col">Location</th>
+            <th class="d-none d-lg-table-cell">Location</th>
             <th class="col-2" scope="col">Your points</th>
         </tr>
     </thead>
     <tbody>
         {% for match in group %}
             <tr class="">
-                <td>{{match.0.match_choice.date|date:"D d M Y H:s e"}}</td>
+                <td class="d-none d-lg-table-cell">{{match.0.match_choice.date|date:"D d M Y H:s e"}}</td>
                 <td class="text-end">{{match.0.match_choice.country.name}}</td>
-                <td><input class="form-control m-1" type="number" name="{{match.0.match_choice.id}}" id="{{match.0.match_choice}}" min=0 value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}"></td>
-                <td><input class="form-control m-1" type="number" name="{{match.1.match_choice.id}}" id="{{match.1.match_choice}}" min=0 value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}"></td>
+                <td><input class="form-control m-1" type="tel" name="{{match.0.match_choice.id}}" id="{{match.0.match_choice}}" min=0 value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}"></td>
+                <td><input class="form-control m-1" type="tel" name="{{match.1.match_choice.id}}" id="{{match.1.match_choice}}" min=0 value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}"></td>
                 <td>{{match.1.match_choice.country.name}}</td>
-                <td>{{match.1.match_choice.location}}</td>
+                <td class="d-none d-lg-table-cell">{{match.1.match_choice.location}}</td>
                 <td>{% if match.0.points != None %}{{match.0.points}}{% else %}{% endif %}</td>
 
                 
@@ -47,7 +46,7 @@
     </table>
 </div>
 </div>
-<div class="col-4">
+<div class="col col-lg-4 overflow-x-auto">
     <table
     class="table table-primary"
     >
@@ -83,7 +82,7 @@
                     name="groups"
                     value="groups"
                 >
-                    Show table
+                    Show table / Submit Scores
                 </button>
     
 </div>
@@ -142,12 +141,12 @@
                 <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
                 <div class="d-flex">
 
-                    <input class="form-control m-1" type="number" name="{{match.0.id}}-score" 
+                    <input class="form-control m-1" type="tel" name="{{match.0.id}}-score" 
                     id="{{match.0.match_choice.match_number}}-0" 
                     onchange="check_score_{{match.0.match_choice.match_number}}()" 
                     value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}">
 
-                    <input class="form-control m-1" type="number" name="{{match.1.id}}-score" 
+                    <input class="form-control m-1" type="tel" name="{{match.1.id}}-score" 
                     id="{{match.0.match_choice.match_number}}-1" 
                     onchange="check_score_{{match.0.match_choice.match_number}}()" 
                     value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}">
@@ -162,13 +161,14 @@
                             document.getElementById('{{match.0.match_choice.match_number}}-aet-0').removeAttribute('hidden');
                             document.getElementById('{{match.0.match_choice.match_number}}-aet-1').removeAttribute('hidden');
                         }
+                        
                             
                     }
                 </script>
                 <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-aet">After Extra Time</h5>
                 <div class="d-flex">
 
-                    <input class="form-control m-1" type="number" name="{{match.0.id}}-aet" 
+                    <input class="form-control m-1" type="tel" name="{{match.0.id}}-aet" 
                         id="{{match.0.match_choice.match_number}}-aet-0" 
                         
                         {% if match.0.score == match.1.score and match.0.score != None %}
@@ -180,7 +180,7 @@
                         onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
                         value="{% if match.0.score_aet != None %}{{match.0.score_aet}}{% else %}{% endif %}">
 
-                    <input class="form-control m-1" type="number" name="{{match.1.id}}-aet" 
+                    <input class="form-control m-1" type="tel" name="{{match.1.id}}-aet" 
                         id="{{match.0.match_choice.match_number}}-aet-1" 
                         {% if match.0.score == match.1.score and match.1.score != None %}
                         {% else %}
@@ -204,7 +204,7 @@
                 <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-pen">Penalties</h5>
                 <div class="d-flex">
 
-                    <input class="form-control m-1" type="number" name="{{match.0.id}}-pens" 
+                    <input class="form-control m-1" type="tel" name="{{match.0.id}}-pens" 
                         id="{{match.0.match_choice.match_number}}-pen-0" 
                         {% if match.0.score_aet == match.1.score_aet and match.0.score_aet != None %}
                         {% else %}
@@ -213,7 +213,7 @@
                         
                         value="{% if match.0.penalties != None %}{{match.0.penalties}}{% else %}{% endif %}">
 
-                    <input class="form-control m-1" type="number" name="{{match.1.id}}-pens" 
+                    <input class="form-control m-1" type="tel" name="{{match.1.id}}-pens" 
                         id="{{match.1.match_choice.match_number}}-pen-1" 
                         {% if match.0.score_aet == match.1.score_aet and match.1.score_aet != None %}
                         {% else %}
@@ -256,12 +256,12 @@
                     <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
                     <div class="d-flex">
     
-                        <input class="form-control m-1" type="number" name="{{match.0.id}}-score" 
+                        <input class="form-control m-1" type="tel" name="{{match.0.id}}-score" 
                         id="{{match.0.match_choice.match_number}}-0" 
                         onchange="check_score_{{match.0.match_choice.match_number}}()" 
                         value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}">
     
-                        <input class="form-control m-1" type="number" name="{{match.1.id}}-score" 
+                        <input class="form-control m-1" type="tel" name="{{match.1.id}}-score" 
                         id="{{match.0.match_choice.match_number}}-1" 
                         onchange="check_score_{{match.0.match_choice.match_number}}()" 
                         value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}">
@@ -282,7 +282,7 @@
                     <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-aet">After Extra Time</h5>
                     <div class="d-flex">
     
-                        <input class="form-control m-1" type="number" name="{{match.0.id}}-aet" 
+                        <input class="form-control m-1" type="tel" name="{{match.0.id}}-aet" 
                             id="{{match.0.match_choice.match_number}}-aet-0" 
                             
                             {% if match.0.score == match.1.score and match.0.score != None %}
@@ -294,7 +294,7 @@
                             onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
                             value="{% if match.0.score_aet != None %}{{match.0.score_aet}}{% else %}{% endif %}">
     
-                        <input class="form-control m-1" type="number" name="{{match.1.id}}-aet" 
+                        <input class="form-control m-1" type="tel" name="{{match.1.id}}-aet" 
                             id="{{match.0.match_choice.match_number}}-aet-1" 
                             {% if match.0.score == match.1.score and match.1.score != None %}
                             {% else %}
@@ -318,7 +318,7 @@
                     <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-pen">Penalties</h5>
                     <div class="d-flex">
     
-                        <input class="form-control m-1" type="number" name="{{match.0.id}}-pens" 
+                        <input class="form-control m-1" type="tel" name="{{match.0.id}}-pens" 
                             id="{{match.0.match_choice.match_number}}-pen-0" 
                             {% if match.0.score_aet == match.1.score_aet and match.0.score_aet != None %}
                             {% else %}
@@ -327,7 +327,7 @@
                             
                             value="{% if match.0.penalties != None %}{{match.0.penalties}}{% else %}{% endif %}">
     
-                        <input class="form-control m-1" type="number" name="{{match.1.id}}-pens" 
+                        <input class="form-control m-1" type="tel" name="{{match.1.id}}-pens" 
                             id="{{match.1.match_choice.match_number}}-pen-1" 
                             {% if match.0.score_aet == match.1.score_aet and match.1.score_aet != None %}
                             {% else %}
@@ -370,12 +370,12 @@
                     <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
                     <div class="d-flex">
     
-                        <input class="form-control m-1" type="number" name="{{match.0.id}}-score" 
+                        <input class="form-control m-1" type="tel" name="{{match.0.id}}-score" 
                         id="{{match.0.match_choice.match_number}}-0" 
                         onchange="check_score_{{match.0.match_choice.match_number}}()" 
                         value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}">
     
-                        <input class="form-control m-1" type="number" name="{{match.1.id}}-score" 
+                        <input class="form-control m-1" type="tel" name="{{match.1.id}}-score" 
                         id="{{match.0.match_choice.match_number}}-1" 
                         onchange="check_score_{{match.0.match_choice.match_number}}()" 
                         value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}">
@@ -396,7 +396,7 @@
                     <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-aet">After Extra Time</h5>
                     <div class="d-flex">
     
-                        <input class="form-control m-1" type="number" name="{{match.0.id}}-aet" 
+                        <input class="form-control m-1" type="tel" name="{{match.0.id}}-aet" 
                             id="{{match.0.match_choice.match_number}}-aet-0" 
                             
                             {% if match.0.score == match.1.score and match.0.score != None %}
@@ -408,7 +408,7 @@
                             onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
                             value="{% if match.0.score_aet != None %}{{match.0.score_aet}}{% else %}{% endif %}">
     
-                        <input class="form-control m-1" type="number" name="{{match.1.id}}-aet" 
+                        <input class="form-control m-1" type="tel" name="{{match.1.id}}-aet" 
                             id="{{match.0.match_choice.match_number}}-aet-1" 
                             {% if match.0.score == match.1.score and match.1.score != None %}
                             {% else %}
@@ -432,7 +432,7 @@
                     <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-pen">Penalties</h5>
                     <div class="d-flex">
     
-                        <input class="form-control m-1" type="number" name="{{match.0.id}}-pens" 
+                        <input class="form-control m-1" type="tel" name="{{match.0.id}}-pens" 
                             id="{{match.0.match_choice.match_number}}-pen-0" 
                             {% if match.0.score_aet == match.1.score_aet and match.0.score_aet != None %}
                             {% else %}
@@ -441,7 +441,7 @@
                             
                             value="{% if match.0.penalties != None %}{{match.0.penalties}}{% else %}{% endif %}">
     
-                        <input class="form-control m-1" type="number" name="{{match.1.id}}-pens" 
+                        <input class="form-control m-1" type="tel" name="{{match.1.id}}-pens" 
                             id="{{match.1.match_choice.match_number}}-pen-1" 
                             {% if match.0.score_aet == match.1.score_aet and match.1.score_aet != None %}
                             {% else %}
@@ -482,12 +482,12 @@
                         <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
                         <div class="d-flex">
         
-                            <input class="form-control m-1" type="number" name="{{match.0.id}}-score" 
+                            <input class="form-control m-1" type="tel" name="{{match.0.id}}-score" 
                             id="{{match.0.match_choice.match_number}}-0" 
                             onchange="check_score_{{match.0.match_choice.match_number}}()" 
                             value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}">
         
-                            <input class="form-control m-1" type="number" name="{{match.1.id}}-score" 
+                            <input class="form-control m-1" type="tel" name="{{match.1.id}}-score" 
                             id="{{match.0.match_choice.match_number}}-1" 
                             onchange="check_score_{{match.0.match_choice.match_number}}()" 
                             value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}">
@@ -508,7 +508,7 @@
                         <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-aet">After Extra Time</h5>
                         <div class="d-flex">
         
-                            <input class="form-control m-1" type="number" name="{{match.0.id}}-aet" 
+                            <input class="form-control m-1" type="tel" name="{{match.0.id}}-aet" 
                                 id="{{match.0.match_choice.match_number}}-aet-0" 
                                 
                                 {% if match.0.score == match.1.score and match.0.score != None %}
@@ -520,7 +520,7 @@
                                 onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
                                 value="{% if match.0.score_aet != None %}{{match.0.score_aet}}{% else %}{% endif %}">
         
-                            <input class="form-control m-1" type="number" name="{{match.1.id}}-aet" 
+                            <input class="form-control m-1" type="tel" name="{{match.1.id}}-aet" 
                                 id="{{match.0.match_choice.match_number}}-aet-1" 
                                 {% if match.0.score == match.1.score and match.1.score != None %}
                                 {% else %}
@@ -544,7 +544,7 @@
                         <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-pen">Penalties</h5>
                         <div class="d-flex">
         
-                            <input class="form-control m-1" type="number" name="{{match.0.id}}-pens" 
+                            <input class="form-control m-1" type="tel" name="{{match.0.id}}-pens" 
                                 id="{{match.0.match_choice.match_number}}-pen-0" 
                                 {% if match.0.score_aet == match.1.score_aet and match.0.score_aet != None %}
                                 {% else %}
@@ -553,7 +553,7 @@
                                 
                                 value="{% if match.0.penalties != None %}{{match.0.penalties}}{% else %}{% endif %}">
         
-                            <input class="form-control m-1" type="number" name="{{match.1.id}}-pens" 
+                            <input class="form-control m-1" type="tel" name="{{match.1.id}}-pens" 
                                 id="{{match.1.match_choice.match_number}}-pen-1" 
                                 {% if match.0.score_aet == match.1.score_aet and match.1.score_aet != None %}
                                 {% else %}

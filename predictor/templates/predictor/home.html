@@ -3,7 +3,9 @@
 <div class="container">
     <div class="row">
         <div class="col">
-
+            {% if not user.is_authenticated %}
+            <h1> Please create an Account to make your predictions</h1>
+            {% endif %}
             <h3>Points explanation</h3>
             <p>
                 For a correct result: 1 Point <br>
