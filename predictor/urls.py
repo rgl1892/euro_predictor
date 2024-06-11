@@ -13,4 +13,5 @@ urlpatterns = [
     path('group_entry',views.PredictionView.as_view(),name='group_entry'),
     path('actual_entry',views.ActualView.as_view(),name='actual_entry'),
     path('winners',views.WinnersView.as_view(),name='winners'),
+    path('stats',views.StatsView.as_view(),name='stats'),
 ]
