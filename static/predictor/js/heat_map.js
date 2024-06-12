@@ -72,7 +72,38 @@ async function get_current_filters() {
     .attr("transform", "rotate(-90)")
     .text(`${away[0].country}`);
 
-    svg.selectAll()
+    var tooltip = d3.select("#heat_map")
+      .append("div")
+      .style("opacity", 0)
+      .attr("class", "tooltip")
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "2px")
+      .style("border-radius", "5px")
+      .style("padding", "5px")
+      .style("position", "absolute");
+
+    var mouseover = function(d) {
+      tooltip.style("opacity", 1);
+      d3.select(this).transition()
+        .duration(200)
+        .style("stroke", "black")
+        .style("opacity", 0.8);
+
+    }
+    var mousemove = function(mouse,d) {
+      tooltip.html( `${d.count}`)
+        .style("left", `${mouse["layerX"] + 20}px`)
+        .style("top", `${mouse["layerY"] - 20}px`);
+    }
+    var mouseleave = function(d) {
+      tooltip
+        .style("opacity", 0);
+      d3.select(this)
+        .style("stroke", "none")
+        .style("opacity", 1)}
+
+    svg.selectAll("rect")
       .data(result,)
       .join("rect")
       .attr("x", function(d) { return x(d.item[0]) })
@@ -82,20 +113,13 @@ async function get_current_filters() {
       .attr("width", x.bandwidth() )
       .attr("height", y.bandwidth() )
       .style("fill", function(d) { return myColor(d.count)} )
-      .append("svg:title")
-        .text((d) => `${d.count}`)
-
-
-    
-    
-
-
-
+    .on("mouseover", mouseover)
+    .on("mousemove", mousemove)
+    .on("mouseleave", mouseleave);
 
 }
 
 
-document.getElementById('user_select').addEventListener('change',get_current_filters)
-document.getElementById('match').addEventListener('change',get_current_filters)
-
+document.getElementById('user_select').addEventListener('change',get_current_filters);
+document.getElementById('match').addEventListener('change',get_current_filters);
 

@@ -29,7 +29,7 @@ async function get_current_filters() {
     country = d3.sort(country,(a,b) => d3.descending(a.goals,b.goals));
     
     var x = d3.scaleBand()
-            .domain(country.map(d => d.country.slice(0,3)))
+            .domain(country.map(d => d.country))
             .range([0,width])
             .padding(0.05)
     var y = d3.scaleLinear()
@@ -38,31 +38,57 @@ async function get_current_filters() {
 
     svg.append("g")
         .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(x)).selectAll("text").attr("text-anchor", "start") 
+        .attr("transform", "rotate(90) translate(10,-14)");
+
     svg.append("g")
         .call(d3.axisLeft(y));
 
     const myColor = d3.scaleSequential(d3.interpolatePlasma)
         .domain([0,d3.max(country,d=>d.goals)]);
-    
-    svg.selectAll("mybar")
+
+    var tooltip = d3.select("#goals_map")
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "2px")
+        .style("border-radius", "5px")
+        .style("padding", "5px")
+        .style("position", "absolute");
+  
+      var mouseover = function(d) {
+        tooltip.style("opacity", 1);
+        d3.select(this)
+          .style("stroke", "black")
+          .style("opacity", 0.8);
+  
+      }
+      var mousemove = function(mouse,d) {
+        console.log(d);
+        tooltip.html( `${d.goals} for ${d.country}`)
+          .style("left", `${mouse["layerX"] + 20}px`)
+          .style("top", `${mouse["layerY"] - 20}px`);
+      }
+      var mouseleave = function(d) {
+        tooltip
+          .style("opacity", 0);
+        d3.select(this)
+          .style("stroke", "none")
+          .style("opacity", 1)}
+
+    svg.selectAll("rect")
         .data(country)
-        .enter()
-        .append("rect")
-            .attr("x", d => x(d.country.slice(0,3)))
+        .join("rect")
+            .attr("x", d => x(d.country))
             .attr("y", d => y(d.goals))
             .attr("width", x.bandwidth())
             .attr("height", d =>  height - y(d.goals))
             .style("fill",  (d)  => myColor(d.goals))
-            .append("svg:title")
-            .text((d) => `${d.country}: ${d.goals}`)
-
-     svg.append("text")
-            .attr("class", "x label")
-            .attr("text-anchor", "end")
-            .attr("x", width)
-            .attr("y", height + 40)
-            .text("Country");
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave);
 
     svg.append("text")
           .attr("class", "y label")
@@ -72,6 +98,7 @@ async function get_current_filters() {
           .attr("dy", ".75em")
           .attr("transform", "rotate(-90) translate(0,-40)")
           .text("Goals");
+          
     
 }
 

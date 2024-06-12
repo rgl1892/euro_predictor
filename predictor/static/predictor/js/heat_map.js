@@ -81,27 +81,27 @@ async function get_current_filters() {
       .style("border-width", "2px")
       .style("border-radius", "5px")
       .style("padding", "5px")
+      .style("position", "absolute");
 
     var mouseover = function(d) {
-      tooltip
-        .style("opacity", 1)
-      d3.select(this)
-        .attr("stroke", "black")
-        .attr("opacity", 1)
+      tooltip.style("opacity", 1);
+      d3.select(this).transition()
+        .duration(200)
+        .style("stroke", "black")
+        .style("opacity", 0.8);
+
     }
-    var mousemove = function(d) {
-      console.log(d["layerX"])
-      tooltip
-        .html("The exact value of<br>this cell is: " + d.count)
-        .style("left", d["layerX"] + 20 + "px")
-        .style("top", d["layerY"] + 20 + "px")
+    var mousemove = function(mouse,d) {
+      tooltip.html( `${d.count}`)
+        .style("left", `${mouse["layerX"] + 20}px`)
+        .style("top", `${mouse["layerY"] - 20}px`);
     }
     var mouseleave = function(d) {
       tooltip
-        .style("opacity", 0)
+        .style("opacity", 0);
       d3.select(this)
         .style("stroke", "none")
-        .style("opacity", 0.8)}
+        .style("opacity", 1)}
 
     svg.selectAll("rect")
       .data(result,)
@@ -115,9 +115,7 @@ async function get_current_filters() {
       .style("fill", function(d) { return myColor(d.count)} )
     .on("mouseover", mouseover)
     .on("mousemove", mousemove)
-    .on("mouseleave", mouseleave)
-      .append("svg:title")
-        .text((d) => `${d.count}`);
+    .on("mouseleave", mouseleave);
 
 }
 
