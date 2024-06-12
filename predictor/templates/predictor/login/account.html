@@ -7,7 +7,31 @@
             <h1>{{item.username}}</h1>
             <form method="POST" action="{% url 'account' %}">
                 {% csrf_token %}
-                {{form}}
+                <div class="mb-3">
+                    <label for="" class="form-label">First Name</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="first_name"
+                        id="first_name"
+                        aria-describedby="helpId"
+                        placeholder={% if item.first_name %}""{% else %}"First name"{% endif %}
+                        value={% if item.first_name %}"{{item.first_name}}"{% else %}""{% endif %} 
+                    />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Last Name</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="last_name"
+                        id="last_name"
+                        aria-describedby="helpId"
+                        placeholder={% if item.last_name %}""{% else %}"Last name"{% endif %}
+                        value={% if item.last_name %}"{{item.last_name}}"{% else %}""{% endif %} 
+                    />
+                </div>
+                
                 <br>
                 <button
                     type="submit"

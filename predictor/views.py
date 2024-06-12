@@ -679,21 +679,17 @@ class AccountView(View):
     def get(self,request):
 
         user = User.objects.filter(username=request.user)
-        form = AccountForm
         context = {
             'logged_in_user':user,
-            'form':form,
         }
         return render(request,self.template_name,context)
     
     def post(self,request):
-        print(request.POST)
-        User.objects.filter(username=request.user).update(first_name =request.POST['first_name'],last_name=request.POST['last_name'])
+
+        User.objects.filter(username=request.user).update(first_name=request.POST['first_name'],last_name=request.POST['last_name'])
         user = User.objects.filter(username=request.user)
 
-        form = AccountForm
         context = {
             'logged_in_user':user,
-            'form':form,
         }
         return render(request,self.template_name,context)
