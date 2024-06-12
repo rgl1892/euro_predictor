@@ -1,10 +1,11 @@
 {% extends 'predictor/base.html' %}
 {% block content %}
 {% load static %}
+<script src="{% static 'predictor/js/d3.v7.js' %}" ></script>
 <div class="container">
     <div class="row">
-        <div class="col-12 col-lg-6" id="heat_div">
-            <script src="{% static 'predictor/js/d3.v7.js' %}" ></script>
+        
+            
             <script type="module" src="{% static 'predictor/js/heat_map.js' %}"></script>
             <div class="mb-3">
                 <label for="" class="form-label">User</label>
@@ -32,9 +33,15 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="col-12 col-lg-6" id="heat_div">
             <div id="heat_map"></div>
             
             
+        </div>
+        <div class="col-12 col-lg-6" id="goal_div">
+            
+            <script type="module" src="{% static 'predictor/js/total_goals.js' %}"></script>
+            <div id="goals_map"></div>
         </div>
     </div>
 </div>

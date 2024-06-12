@@ -1,5 +1,3 @@
-console.log(document.getElementById("heat_div").offsetWidth)
-
 var margin = { top: 30, right: 50, bottom: 50, left: 30 },
         width = document.getElementById("heat_div").offsetWidth - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
@@ -14,8 +12,13 @@ async function get_current_filters() {
     var user = document.getElementById('user_select').value;
     var match_choice = document.getElementById('match').value;
     var url = `api/predictions?user=${user}&match_choice__match_number=${match_choice}`;
-    
+
+    svg.selectAll("*").remove();
+    svg.append("text").text("Loading")
+
     var data = await d3.json(url);
+
+    svg.selectAll("*").remove();
 
     var home = d3.filter(data, d => d.score != null && d.match_choice.home_away == 'Home');
     var away = d3.filter(data, d => d.score != null && d.match_choice.home_away == 'Away');
@@ -34,7 +37,7 @@ async function get_current_filters() {
         count: newArray[key]
       }));   
 
-    svg.selectAll("*").remove();
+    
 
     var x = d3.scaleBand()
             .range([0,width])

@@ -1,5 +1,3 @@
-console.log(document.getElementById("heat_div").offsetWidth)
-
 var margin = { top: 30, right: 50, bottom: 50, left: 30 },
         width = document.getElementById("heat_div").offsetWidth - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
