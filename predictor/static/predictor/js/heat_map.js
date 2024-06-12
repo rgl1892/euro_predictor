@@ -92,7 +92,7 @@ async function get_current_filters() {
 
     }
     var mousemove = function(mouse,d) {
-      tooltip.html( `${d.count}`)
+      tooltip.html( `${d.count} : ${d.item[0]}-${d.item[1]}`)
         .style("left", `${mouse["layerX"] + 20}px`)
         .style("top", `${mouse["layerY"] - 20}px`);
     }
