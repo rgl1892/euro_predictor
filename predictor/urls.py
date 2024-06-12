@@ -14,4 +14,5 @@ urlpatterns = [
     path('actual_entry',views.ActualView.as_view(),name='actual_entry'),
     path('winners',views.WinnersView.as_view(),name='winners'),
     path('stats',views.StatsView.as_view(),name='stats'),
+    path('account',views.AccountView.as_view(),name='account'),
 ]

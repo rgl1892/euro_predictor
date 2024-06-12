@@ -1,0 +1,25 @@
+{% extends 'predictor/base.html' %}
+{% block content%}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            {% for item in logged_in_user %}
+            <h1>{{item.username}}</h1>
+            <form method="POST" action="{% url 'account' %}">
+                {% csrf_token %}
+                {{form}}
+                <br>
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Update
+                </button>
+                
+                </form>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

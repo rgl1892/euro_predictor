@@ -12,3 +12,7 @@ class EditUserForm(UserCreationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     password1 = forms.CharField(help_text=password_validation.password_validators_help_text_html(),label=("Password"),widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Password'}))
     password2 = forms.CharField(label=("Re-enter Password"),widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Password'}))
+
+class AccountForm(forms.Form):
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'First Name'}))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Last Name'}))

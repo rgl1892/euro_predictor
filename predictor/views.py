@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 
-from .forms import EditAuthForm,EditUserForm
+from .forms import EditAuthForm,EditUserForm,AccountForm
 from .models import Country,Group,Score,Prediction,Match,Winner
 
 def create_user_predictions(request):
@@ -670,4 +670,30 @@ class StatsView(View):
             'teams_per_match':teams_per_match,
         }
     
+        return render(request,self.template_name,context)
+    
+class AccountView(View):
+
+    template_name = 'predictor/login/account.html'
+
+    def get(self,request):
+
+        user = User.objects.filter(username=request.user)
+        form = AccountForm
+        context = {
+            'logged_in_user':user,
+            'form':form,
+        }
+        return render(request,self.template_name,context)
+    
+    def post(self,request):
+        print(request.POST)
+        User.objects.filter(username=request.user).update(first_name =request.POST['first_name'],last_name=request.POST['last_name'])
+        user = User.objects.filter(username=request.user)
+
+        form = AccountForm
+        context = {
+            'logged_in_user':user,
+            'form':form,
+        }
         return render(request,self.template_name,context)
