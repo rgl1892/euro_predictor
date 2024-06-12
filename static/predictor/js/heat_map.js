@@ -1,6 +1,8 @@
+console.log(document.getElementById("heat_div").offsetWidth)
+
 var margin = { top: 30, right: 50, bottom: 50, left: 30 },
-        width = 300 - margin.left - margin.right,
-        height = 300 - margin.top - margin.bottom;
+        width = document.getElementById("heat_div").offsetWidth - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
 
 var svg = d3.select('#heat_map').append('svg')
         .attr('width', width + margin.left + margin.right)
@@ -37,7 +39,7 @@ async function get_current_filters() {
     var x = d3.scaleBand()
             .range([0,width])
             .domain([0,1,2,3,4,5,6])
-            .padding(0.01);
+            .padding(0.05);
     svg.append("g")
         .attr("transform", `translate(0, ${height})`)
       .call(d3.axisBottom(x));
@@ -45,7 +47,7 @@ async function get_current_filters() {
     var y = d3.scaleBand()
       .range([height,0])
       .domain([0,1,2,3,4,5,6])
-      .padding(0.02);
+      .padding(0.05);
     svg.append("g")
       .call(d3.axisLeft(y));
 
@@ -72,8 +74,10 @@ async function get_current_filters() {
       .join("rect")
       .attr("x", function(d) { return x(d.item[0]) })
       .attr("y", function(d) { return y(d.item[1]) })
-      .attr("width", "30px" )
-      .attr("height", "30px" )
+      .attr("rx", 4)
+      .attr("ry", 4)
+      .attr("width", x.bandwidth() )
+      .attr("height", y.bandwidth() )
       .style("fill", function(d) { return myColor(d.count)} )
       .append("svg:title")
         .text((d) => `${d.count}`)
