@@ -85,8 +85,7 @@ async function get_current_filters() {
 
     var mouseover = function(d) {
       tooltip.style("opacity", 1);
-      d3.select(this).transition()
-        .duration(200)
+      d3.select(this)
         .style("stroke", "black")
         .style("opacity", 0.8);
 
