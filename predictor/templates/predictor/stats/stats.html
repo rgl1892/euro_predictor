@@ -34,15 +34,26 @@
                 </select>
             </div>
             <div class="col-12 col-lg-6" id="heat_div">
-            <div id="heat_map"></div>
+            <div id="heat_map">
+                <h3>Heat map of scores</h3>
+            </div>
             
             
         </div>
         <div class="col-12 col-lg-6" id="goal_div">
             
             <script type="module" src="{% static 'predictor/js/total_goals.js' %}"></script>
-            <div id="goals_map"></div>
+            <div id="goals_map">
+                <h3>Total goals per Country</h3>
+            </div>
+            
         </div>
+        <div class="col-12 col-lg-6" id="patriot_div">
+            
+            <script type="module" src="{% static 'predictor/js/patriot.js' %}"></script>
+            <div id="patriot_map">
+                <h3>User Goals for England</h3>
+            </div>
     </div>
 </div>
 
