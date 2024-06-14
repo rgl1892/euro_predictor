@@ -2,15 +2,12 @@
 {% block content %}
 {% load static %}
 <div class="container">
-    
-        <form action="{% url 'group_entry' %}" method="post">
-            {% csrf_token %}
-                
-                
+                    
+            <h1>{{user_name}}</h1>
         {% for group in grouped %}
         <div class="row">
         <h1>{{group.0.0.match_choice.group}}</h1>
-        <div class="col-8">
+        <div class="col-12 col-lg-8">
         <div
         class="table-responsive"
     >
@@ -19,24 +16,24 @@
     >
     <thead>
         <tr>
-            <th class="col-2" scope="col">Date</th>
+            <th class="col-2 d-none d-lg-table-cell" scope="col">Date</th>
             <th class="col-2 justify-content-end" scope="col">Home</th>
             <th class="col-2" scope="col">Score</th>
             <th class="col-2" scope="col">Score</th>
             <th scope="col-2">Away</th>
-            <th class="col-2" scope="col">Location</th>
+            <th class="d-none d-lg-table-cell">Location</th>
             <th class="col-2" scope="col">Your points</th>
         </tr>
     </thead>
     <tbody>
         {% for match in group %}
             <tr class="">
-                <td>{{match.0.match_choice.date|date:"D d M Y H:s e"}}</td>
+                <td class="d-none d-lg-table-cell">{{match.0.match_choice.date|date:"D d M Y H:s e"}}</td>
                 <td class="text-end">{{match.0.match_choice.country.name}}</td>
-                <td><input class="form-control" type="number" name="{{match.0.match_choice.id}}" id="{{match.0.match_choice}}" min=0 value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}"></td>
-                <td><input class="form-control" type="number" name="{{match.1.match_choice.id}}" id="{{match.1.match_choice}}" min=0 value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}"></td>
+                <td>{{match.0.score}}</td>
+                <td>{{match.1.score}}</td>
                 <td>{{match.1.match_choice.country.name}}</td>
-                <td>{{match.1.match_choice.location}}</td>
+                <td class="d-none d-lg-table-cell">{{match.1.match_choice.location}}</td>
                 <td>{% if match.0.points != None %}{{match.0.points}}{% else %}{% endif %}</td>
 
                 
@@ -76,16 +73,7 @@
         </tr>
         {% endfor %}
     </tbody>
-    </table>
-    <button
-                    type="submit"
-                    class="btn btn-primary"
-                    name="groups"
-                    value="groups"
-                >
-                    Show table
-                </button>
-    
+    </table>    
 </div>
 </div>
 {% endfor %}
@@ -129,97 +117,64 @@
 </div>
 </div>
 <hr class="border  border-2 opacity-100">
-<form action="{% url 'group_entry' %}" method="post">
 {% csrf_token %}
     <div class="row">
         <h2 id="knockouts">Knockouts</h2>
         <h4>Last 16</h4>
         {% for match in now_preds|slice:8 %}
-        <div class="col-6">
-        <div class="card">
+        <div class="col-12 col-lg-6">
+        <div class="card m-1">
             <div class="card-body d-flex flex-column">
                 <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
                 <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
-                <div class="d-flex">
+                <div class="d-flex justify-content-center">
+                    <div>
+                        {% if match.0.score != None %}
+                        {{match.0.score}}
+                        -
+                        {% endif %}
+                    </div>
 
-                    <input class="form-control" type="number" name="{{match.0.id}}-score" 
-                    id="{{match.0.match_choice.match_number}}-0" 
-                    onchange="check_score_{{match.0.match_choice.match_number}}()" 
-                    value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}">
-
-                    <input class="form-control" type="number" name="{{match.1.id}}-score" 
-                    id="{{match.0.match_choice.match_number}}-1" 
-                    onchange="check_score_{{match.0.match_choice.match_number}}()" 
-                    value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}">
-
+                    <div>
+                        {% if match.1.score != None %}
+                        {{match.1.score}}
+                        {% endif %}
+                    </div>
+                    
                 </div>
-                <script >
-                    function check_score_{{match.0.match_choice.match_number}}() {
-                        const val_0 = document.getElementById('{{match.0.match_choice.match_number}}-0').value;
-                        const val_1 = document.getElementById('{{match.0.match_choice.match_number}}-1').value;
-                        if (val_0 ==val_1){
-                            document.getElementById('{{match.0.match_choice.match_number}}-aet').removeAttribute('hidden');
-                            document.getElementById('{{match.0.match_choice.match_number}}-aet-0').removeAttribute('hidden');
-                            document.getElementById('{{match.0.match_choice.match_number}}-aet-1').removeAttribute('hidden');
-                        }
-                            
-                    }
-                </script>
+                
                 <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-aet">After Extra Time</h5>
-                <div class="d-flex">
+                <div class="d-flex justify-content-center">
 
-                    <input class="form-control" type="number" name="{{match.0.id}}-aet" 
-                        id="{{match.0.match_choice.match_number}}-aet-0" 
-                        
-                        {% if match.0.score == match.1.score and match.0.score != None %}
-                        {% else %}
-                        hidden
+                    <div class="text text-center">
+                        {% if match.0.score_aet != None %}
+                        {{match.0.score_aet}}
+                        -
                         {% endif %}
-                         
-
-                        onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
-                        value="{% if match.0.score_aet != None %}{{match.0.score_aet}}{% else %}{% endif %}">
-
-                    <input class="form-control" type="number" name="{{match.1.id}}-aet" 
-                        id="{{match.0.match_choice.match_number}}-aet-1" 
-                        {% if match.0.score == match.1.score and match.1.score != None %}
-                        {% else %}
-                        hidden
-                        {% endif %} 
-                        onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
-                        value="{% if match.1.score_aet != None %}{{match.1.score_aet}}{% else %}{% endif %}">
+                    </div>
+                    
+                    <div>
+                        {% if match.1.score_aet != None %}
+                        {{match.1.score_aet}}
+                        {% endif %}
+                    </div>
                 </div>
-                <script >
-                    function aet_check_score_{{match.0.match_choice.match_number}}() {
-                        const val_2 = document.getElementById('{{match.0.match_choice.match_number}}-aet-0').value;
-                        const val_3 = document.getElementById('{{match.0.match_choice.match_number}}-aet-1').value;
-                        if (val_2 ==val_3){
-                            document.getElementById('{{match.0.match_choice.match_number}}-pen').removeAttribute('hidden');
-                            document.getElementById('{{match.0.match_choice.match_number}}-pen-0').removeAttribute('hidden');
-                            document.getElementById('{{match.0.match_choice.match_number}}-pen-1').removeAttribute('hidden');
-                        }
-                        
-                    }
-                </script>
+                
                 <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-pen">Penalties</h5>
-                <div class="d-flex">
+                <div class="d-flex justify-content-center">
 
-                    <input class="form-control" type="number" name="{{match.0.id}}-pens" 
-                        id="{{match.0.match_choice.match_number}}-pen-0" 
-                        {% if match.0.score_aet == match.1.score_aet and match.0.score_aet != None %}
-                        {% else %}
-                        hidden
+                    <div>
+                        {% if match.0.penalties != None %}
+                        {{match.0.penalties}}
+                        -
                         {% endif %}
-                        
-                        value="{% if match.0.penalties != None %}{{match.0.penalties}}{% else %}{% endif %}">
+                    </div>
 
-                    <input class="form-control" type="number" name="{{match.1.id}}-pens" 
-                        id="{{match.1.match_choice.match_number}}-pen-1" 
-                        {% if match.0.score_aet == match.1.score_aet and match.1.score_aet != None %}
-                        {% else %}
-                        hidden
+                    <div>
+                        {% if match.1.penalties != None %}
+                        {{match.1.penalties}}
                         {% endif %}
-                        value="{% if match.1.penalties != None %}{{match.1.penalties}}{% else %}{% endif %}">
+                    </div>
                 </div>
                 <h6 class="card-title text-center">{{match.0.match_choice.location}}</h5>
             </div>
@@ -227,232 +182,144 @@
           
         </div>
     {% endfor %}
-    <button
-        type="submit"
-        class="btn btn-primary"
-        name="last-16"
-        value="last-16"
-    >
-        Submit Last 16
-    </button>
     
 </div>
 </form>
 <hr class="border  border-2 opacity-100">
-<form action="{% url 'group_entry' %}" method="post">
     {% csrf_token %}
         <div class="row">
             <h4>Quarter Finals</h4>
             {% for match in quarters %}
-            <div class="col-6">
-            <div class="card">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
-                    <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
-                    <div class="d-flex">
-    
-                        <input class="form-control" type="number" name="{{match.0.id}}-score" 
-                        id="{{match.0.match_choice.match_number}}-0" 
-                        onchange="check_score_{{match.0.match_choice.match_number}}()" 
-                        value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}">
-    
-                        <input class="form-control" type="number" name="{{match.1.id}}-score" 
-                        id="{{match.0.match_choice.match_number}}-1" 
-                        onchange="check_score_{{match.0.match_choice.match_number}}()" 
-                        value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}">
-    
-                    </div>
-                    <script >
-                        function check_score_{{match.0.match_choice.match_number}}() {
-                            const val_0 = document.getElementById('{{match.0.match_choice.match_number}}-0').value;
-                            const val_1 = document.getElementById('{{match.0.match_choice.match_number}}-1').value;
-                            if (val_0 ==val_1){
-                                document.getElementById('{{match.0.match_choice.match_number}}-aet').removeAttribute('hidden');
-                                document.getElementById('{{match.0.match_choice.match_number}}-aet-0').removeAttribute('hidden');
-                                document.getElementById('{{match.0.match_choice.match_number}}-aet-1').removeAttribute('hidden');
-                            }
-                                
-                        }
-                    </script>
-                    <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-aet">After Extra Time</h5>
-                    <div class="d-flex">
-    
-                        <input class="form-control" type="number" name="{{match.0.id}}-aet" 
-                            id="{{match.0.match_choice.match_number}}-aet-0" 
+            <div class="col-12 col-lg-6">
+                <div class="card m-1">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
+                        <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                {% if match.0.score != None %}
+                                {{match.0.score}}
+                                -
+                                {% endif %}
+                            </div>
+        
+                            <div>
+                                {% if match.1.score != None %}
+                                {{match.1.score}}
+                                {% endif %}
+                            </div>
                             
-                            {% if match.0.score == match.1.score and match.0.score != None %}
-                            {% else %}
-                            hidden
-                            {% endif %}
-                             
-    
-                            onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
-                            value="{% if match.0.score_aet != None %}{{match.0.score_aet}}{% else %}{% endif %}">
-    
-                        <input class="form-control" type="number" name="{{match.1.id}}-aet" 
-                            id="{{match.0.match_choice.match_number}}-aet-1" 
-                            {% if match.0.score == match.1.score and match.1.score != None %}
-                            {% else %}
-                            hidden
-                            {% endif %} 
-                            onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
-                            value="{% if match.1.score_aet != None %}{{match.1.score_aet}}{% else %}{% endif %}">
-                    </div>
-                    <script >
-                        function aet_check_score_{{match.0.match_choice.match_number}}() {
-                            const val_2 = document.getElementById('{{match.0.match_choice.match_number}}-aet-0').value;
-                            const val_3 = document.getElementById('{{match.0.match_choice.match_number}}-aet-1').value;
-                            if (val_2 ==val_3){
-                                document.getElementById('{{match.0.match_choice.match_number}}-pen').removeAttribute('hidden');
-                                document.getElementById('{{match.0.match_choice.match_number}}-pen-0').removeAttribute('hidden');
-                                document.getElementById('{{match.0.match_choice.match_number}}-pen-1').removeAttribute('hidden');
-                            }
+                        </div>
+                        
+                        <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-aet">After Extra Time</h5>
+                        <div class="d-flex justify-content-center">
+        
+                            <div class="text text-center">
+                                {% if match.0.score_aet != None %}
+                                {{match.0.score_aet}}
+                                -
+                                {% endif %}
+                            </div>
                             
-                        }
-                    </script>
-                    <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-pen">Penalties</h5>
-                    <div class="d-flex">
-    
-                        <input class="form-control" type="number" name="{{match.0.id}}-pens" 
-                            id="{{match.0.match_choice.match_number}}-pen-0" 
-                            {% if match.0.score_aet == match.1.score_aet and match.0.score_aet != None %}
-                            {% else %}
-                            hidden
-                            {% endif %}
-                            
-                            value="{% if match.0.penalties != None %}{{match.0.penalties}}{% else %}{% endif %}">
-    
-                        <input class="form-control" type="number" name="{{match.1.id}}-pens" 
-                            id="{{match.1.match_choice.match_number}}-pen-1" 
-                            {% if match.0.score_aet == match.1.score_aet and match.1.score_aet != None %}
-                            {% else %}
-                            hidden
-                            {% endif %}
-                            value="{% if match.1.penalties != None %}{{match.1.penalties}}{% else %}{% endif %}">
+                            <div>
+                                {% if match.1.score_aet != None %}
+                                {{match.1.score_aet}}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-pen">Penalties</h5>
+                        <div class="d-flex justify-content-center">
+        
+                            <div>
+                                {% if match.0.penalties != None %}
+                                {{match.0.penalties}}
+                                -
+                                {% endif %}
+                            </div>
+        
+                            <div>
+                                {% if match.1.penalties != None %}
+                                {{match.1.penalties}}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <h6 class="card-title text-center">{{match.0.match_choice.location}}</h5>
                     </div>
-                    <h6 class="card-title text-center">{{match.0.match_choice.location}}</h5>
+                  </div>
+                  
                 </div>
-              </div>
-              
-            </div>
         {% endfor %}
-        <button
-            type="submit"
-            class="btn btn-primary p-2"
-            name="quarters"
-            value="quarters"
-        >
-            Submit Quarters
-        </button>
+        
         
     </div>
     </form>
     <hr class="border  border-2 opacity-100">
-<form action="{% url 'group_entry' %}" method="post">
     {% csrf_token %}
         <div class="row">
             <h4>Semi Finals</h4>
             {% for match in semis %}
-            <div class="col-6">
-            <div class="card">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
-                    <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
-                    <div class="d-flex">
-    
-                        <input class="form-control" type="number" name="{{match.0.id}}-score" 
-                        id="{{match.0.match_choice.match_number}}-0" 
-                        onchange="check_score_{{match.0.match_choice.match_number}}()" 
-                        value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}">
-    
-                        <input class="form-control" type="number" name="{{match.1.id}}-score" 
-                        id="{{match.0.match_choice.match_number}}-1" 
-                        onchange="check_score_{{match.0.match_choice.match_number}}()" 
-                        value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}">
-    
-                    </div>
-                    <script >
-                        function check_score_{{match.0.match_choice.match_number}}() {
-                            const val_0 = document.getElementById('{{match.0.match_choice.match_number}}-0').value;
-                            const val_1 = document.getElementById('{{match.0.match_choice.match_number}}-1').value;
-                            if (val_0 ==val_1){
-                                document.getElementById('{{match.0.match_choice.match_number}}-aet').removeAttribute('hidden');
-                                document.getElementById('{{match.0.match_choice.match_number}}-aet-0').removeAttribute('hidden');
-                                document.getElementById('{{match.0.match_choice.match_number}}-aet-1').removeAttribute('hidden');
-                            }
-                                
-                        }
-                    </script>
-                    <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-aet">After Extra Time</h5>
-                    <div class="d-flex">
-    
-                        <input class="form-control" type="number" name="{{match.0.id}}-aet" 
-                            id="{{match.0.match_choice.match_number}}-aet-0" 
+            <div class="col-12 col-lg-6">
+                <div class="card m-1">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
+                        <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
+                        <div class="d-flex justify-content-center">
+                            <div>
+                                {% if match.0.score != None %}
+                                {{match.0.score}}
+                                -
+                                {% endif %}
+                            </div>
+        
+                            <div>
+                                {% if match.1.score != None %}
+                                {{match.1.score}}
+                                {% endif %}
+                            </div>
                             
-                            {% if match.0.score == match.1.score and match.0.score != None %}
-                            {% else %}
-                            hidden
-                            {% endif %}
-                             
-    
-                            onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
-                            value="{% if match.0.score_aet != None %}{{match.0.score_aet}}{% else %}{% endif %}">
-    
-                        <input class="form-control" type="number" name="{{match.1.id}}-aet" 
-                            id="{{match.0.match_choice.match_number}}-aet-1" 
-                            {% if match.0.score == match.1.score and match.1.score != None %}
-                            {% else %}
-                            hidden
-                            {% endif %} 
-                            onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
-                            value="{% if match.1.score_aet != None %}{{match.1.score_aet}}{% else %}{% endif %}">
-                    </div>
-                    <script >
-                        function aet_check_score_{{match.0.match_choice.match_number}}() {
-                            const val_2 = document.getElementById('{{match.0.match_choice.match_number}}-aet-0').value;
-                            const val_3 = document.getElementById('{{match.0.match_choice.match_number}}-aet-1').value;
-                            if (val_2 ==val_3){
-                                document.getElementById('{{match.0.match_choice.match_number}}-pen').removeAttribute('hidden');
-                                document.getElementById('{{match.0.match_choice.match_number}}-pen-0').removeAttribute('hidden');
-                                document.getElementById('{{match.0.match_choice.match_number}}-pen-1').removeAttribute('hidden');
-                            }
+                        </div>
+                        
+                        <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-aet">After Extra Time</h5>
+                        <div class="d-flex justify-content-center">
+        
+                            <div class="text text-center">
+                                {% if match.0.score_aet != None %}
+                                {{match.0.score_aet}}
+                                -
+                                {% endif %}
+                            </div>
                             
-                        }
-                    </script>
-                    <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-pen">Penalties</h5>
-                    <div class="d-flex">
-    
-                        <input class="form-control" type="number" name="{{match.0.id}}-pens" 
-                            id="{{match.0.match_choice.match_number}}-pen-0" 
-                            {% if match.0.score_aet == match.1.score_aet and match.0.score_aet != None %}
-                            {% else %}
-                            hidden
-                            {% endif %}
-                            
-                            value="{% if match.0.penalties != None %}{{match.0.penalties}}{% else %}{% endif %}">
-    
-                        <input class="form-control" type="number" name="{{match.1.id}}-pens" 
-                            id="{{match.1.match_choice.match_number}}-pen-1" 
-                            {% if match.0.score_aet == match.1.score_aet and match.1.score_aet != None %}
-                            {% else %}
-                            hidden
-                            {% endif %}
-                            value="{% if match.1.penalties != None %}{{match.1.penalties}}{% else %}{% endif %}">
+                            <div>
+                                {% if match.1.score_aet != None %}
+                                {{match.1.score_aet}}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-pen">Penalties</h5>
+                        <div class="d-flex justify-content-center">
+        
+                            <div>
+                                {% if match.0.penalties != None %}
+                                {{match.0.penalties}}
+                                -
+                                {% endif %}
+                            </div>
+        
+                            <div>
+                                {% if match.1.penalties != None %}
+                                {{match.1.penalties}}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <h6 class="card-title text-center">{{match.0.match_choice.location}}</h5>
                     </div>
-                    <h6 class="card-title text-center">{{match.0.match_choice.location}}</h5>
+                  </div>
+                  
                 </div>
-              </div>
-              
-            </div>
         {% endfor %}
-        <button
-            type="submit"
-            class="btn btn-primary"
-            name="semis"
-            value="semis"
-        >
-            Submit Semis
-        </button>
+        
         
     </div>
     </form>
@@ -463,105 +330,66 @@
                 <h4>Finals</h4>
                 {% for match in final %}
                 <div class="col-12">
-                <div class="card">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
-                        <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
-                        <div class="d-flex">
-        
-                            <input class="form-control" type="number" name="{{match.0.id}}-score" 
-                            id="{{match.0.match_choice.match_number}}-0" 
-                            onchange="check_score_{{match.0.match_choice.match_number}}()" 
-                            value="{% if match.0.score != None %}{{match.0.score}}{% else %}{% endif %}">
-        
-                            <input class="form-control" type="number" name="{{match.1.id}}-score" 
-                            id="{{match.0.match_choice.match_number}}-1" 
-                            onchange="check_score_{{match.0.match_choice.match_number}}()" 
-                            value="{% if match.1.score != None %}{{match.1.score}}{% else %}{% endif %}">
-        
-                        </div>
-                        <script >
-                            function check_score_{{match.0.match_choice.match_number}}() {
-                                const val_0 = document.getElementById('{{match.0.match_choice.match_number}}-0').value;
-                                const val_1 = document.getElementById('{{match.0.match_choice.match_number}}-1').value;
-                                if (val_0 ==val_1){
-                                    document.getElementById('{{match.0.match_choice.match_number}}-aet').removeAttribute('hidden');
-                                    document.getElementById('{{match.0.match_choice.match_number}}-aet-0').removeAttribute('hidden');
-                                    document.getElementById('{{match.0.match_choice.match_number}}-aet-1').removeAttribute('hidden');
-                                }
-                                    
-                            }
-                        </script>
-                        <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-aet">After Extra Time</h5>
-                        <div class="d-flex">
-        
-                            <input class="form-control" type="number" name="{{match.0.id}}-aet" 
-                                id="{{match.0.match_choice.match_number}}-aet-0" 
+                    <div class="card m-1">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
+                            <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
+                            <div class="d-flex justify-content-center">
+                                <div>
+                                    {% if match.0.score != None %}
+                                    {{match.0.score}}
+                                    -
+                                    {% endif %}
+                                </div>
+            
+                                <div>
+                                    {% if match.1.score != None %}
+                                    {{match.1.score}}
+                                    {% endif %}
+                                </div>
                                 
-                                {% if match.0.score == match.1.score and match.0.score != None %}
-                                {% else %}
-                                hidden
-                                {% endif %}
-                                 
-        
-                                onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
-                                value="{% if match.0.score_aet != None %}{{match.0.score_aet}}{% else %}{% endif %}">
-        
-                            <input class="form-control" type="number" name="{{match.1.id}}-aet" 
-                                id="{{match.0.match_choice.match_number}}-aet-1" 
-                                {% if match.0.score == match.1.score and match.1.score != None %}
-                                {% else %}
-                                hidden
-                                {% endif %} 
-                                onchange="aet_check_score_{{match.0.match_choice.match_number}}()" 
-                                value="{% if match.1.score_aet != None %}{{match.1.score_aet}}{% else %}{% endif %}">
-                        </div>
-                        <script >
-                            function aet_check_score_{{match.0.match_choice.match_number}}() {
-                                const val_2 = document.getElementById('{{match.0.match_choice.match_number}}-aet-0').value;
-                                const val_3 = document.getElementById('{{match.0.match_choice.match_number}}-aet-1').value;
-                                if (val_2 ==val_3){
-                                    document.getElementById('{{match.0.match_choice.match_number}}-pen').removeAttribute('hidden');
-                                    document.getElementById('{{match.0.match_choice.match_number}}-pen-0').removeAttribute('hidden');
-                                    document.getElementById('{{match.0.match_choice.match_number}}-pen-1').removeAttribute('hidden');
-                                }
+                            </div>
+                            
+                            <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-aet">After Extra Time</h5>
+                            <div class="d-flex justify-content-center">
+            
+                                <div class="text text-center">
+                                    {% if match.0.score_aet != None %}
+                                    {{match.0.score_aet}}
+                                    -
+                                    {% endif %}
+                                </div>
                                 
-                            }
-                        </script>
-                        <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-pen">Penalties</h5>
-                        <div class="d-flex">
-        
-                            <input class="form-control" type="number" name="{{match.0.id}}-pens" 
-                                id="{{match.0.match_choice.match_number}}-pen-0" 
-                                {% if match.0.score_aet == match.1.score_aet and match.0.score_aet != None %}
-                                {% else %}
-                                hidden
-                                {% endif %}
-                                
-                                value="{% if match.0.penalties != None %}{{match.0.penalties}}{% else %}{% endif %}">
-        
-                            <input class="form-control" type="number" name="{{match.1.id}}-pens" 
-                                id="{{match.1.match_choice.match_number}}-pen-1" 
-                                {% if match.0.score_aet == match.1.score_aet and match.1.score_aet != None %}
-                                {% else %}
-                                hidden
-                                {% endif %}
-                                value="{% if match.1.penalties != None %}{{match.1.penalties}}{% else %}{% endif %}">
+                                <div>
+                                    {% if match.1.score_aet != None %}
+                                    {{match.1.score_aet}}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <h5 class="card-title text-center" hidden id="{{match.0.match_choice.match_number}}-pen">Penalties</h5>
+                            <div class="d-flex justify-content-center">
+            
+                                <div>
+                                    {% if match.0.penalties != None %}
+                                    {{match.0.penalties}}
+                                    -
+                                    {% endif %}
+                                </div>
+            
+                                <div>
+                                    {% if match.1.penalties != None %}
+                                    {{match.1.penalties}}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <h6 class="card-title text-center">{{match.0.match_choice.location}}</h5>
                         </div>
-                        <h6 class="card-title text-center">{{match.0.match_choice.location}}</h5>
+                      </div>
+                      
                     </div>
-                  </div>
-                  
-                </div>
             {% endfor %}
-            <button
-                type="submit"
-                class="btn btn-primary"
-                name="final"
-                value="final"
-            >
-                Submit Final
-            </button>
+            
             
         </div>
         </form>

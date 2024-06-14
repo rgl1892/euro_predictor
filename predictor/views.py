@@ -122,10 +122,10 @@ def logInUser(request):
             login(request, user)
             return redirect('homepage')
         
-def get_group_tables(request):
+def get_group_tables(request,user_name):
     groups = Group.objects.all()
     matches = Match.objects.all()
-    scores = Prediction.objects.filter(user=request.user).order_by('match_choice__match_number')
+    scores = Prediction.objects.filter(user=user_name).order_by('match_choice__match_number')
     grouped = [[[score for score in scores.filter(match_choice__match_number=event)] for event in matches.filter(score__group=group)][::2] for group in groups]
     country = {}
     for group in grouped:
@@ -177,7 +177,7 @@ def get_group_tables(request):
         }
     
     final_matches = Score.objects.filter(stage='Finals')
-    now_preds = [[item for item in Prediction.objects.filter(user=request.user,match_choice__match_number=match_item.match_number)] for match_item in final_matches][::2]
+    now_preds = [[item for item in Prediction.objects.filter(user=user_name,match_choice__match_number=match_item.match_number)] for match_item in final_matches][::2]
         
     context['now_preds'] = now_preds[:8]
     context['quarters'] = now_preds[8:12]
@@ -191,7 +191,7 @@ class PredictionView(View):
     template_name = 'predictor/prediction/prediction.html'
 
     def get(self, request):
-        context = get_group_tables(request)
+        context = get_group_tables(request,request.user)
         return render(request,self.template_name,context)
     
     def post(self, request):
@@ -207,7 +207,7 @@ class PredictionView(View):
                         Prediction.objects.filter(match_choice=x,user=request.user).update(score=request.POST[f'{x}'])
                     else:
                         Prediction.objects.filter(match_choice=x,user=request.user).update(score=None)
-            context = get_group_tables(request)
+            context = get_group_tables(request,request.user)
             pred = Prediction.objects.filter(user=request.user).exclude(score__isnull=True).exclude(match_choice__group__letter__isnull=True)
             third_groups = sorted(context['third_groups'])
             options = {
@@ -411,7 +411,7 @@ class PredictionView(View):
                         winners.append(match_played[1].country)
                 Winner.objects.update_or_create(user=request.user,winner=winners[0])
 
-        context = get_group_tables(request)
+        context = get_group_tables(request,request.user)
         
         return render(request,self.template_name,context)
     
@@ -434,7 +434,7 @@ class ActualView(View):
 
     def get(self, request):
         check_user_points(request)
-        context = get_group_tables(request)
+        context = get_group_tables(request,request.user)
         return render(request,self.template_name,context)
     
     def post(self, request):
@@ -450,7 +450,7 @@ class ActualView(View):
                         Prediction.objects.filter(match_choice=x,user=request.user).update(score=request.POST[f'{x}'])
                     else:
                         Prediction.objects.filter(match_choice=x,user=request.user).update(score=None)
-            context = get_group_tables(request)
+            context = get_group_tables(request,request.user)
             pred = Prediction.objects.filter(user=request.user).exclude(score__isnull=True).exclude(match_choice__group__letter__isnull=True)
             third_groups = sorted(context['third_groups'])
             options = {
@@ -654,7 +654,7 @@ class ActualView(View):
                         winners.append(match_played[1].country)
                 Winner.objects.update_or_create(user=request.user,winner=winners[0])
 
-        context = get_group_tables(request)
+        context = get_group_tables(request,request.user)
         
         return render(request,self.template_name,context)
     
@@ -692,4 +692,22 @@ class AccountView(View):
         context = {
             'logged_in_user':user,
         }
+        return render(request,self.template_name,context)
+
+class ClosedPredictionView(View):
+
+    template_name = 'predictor/prediction/closed_predictions.html'
+
+    def get(self, request):
+        context = get_group_tables(request,request.user)
+        return render(request,self.template_name,context)
+    
+class SeeUserPredictions(View):
+    template_name = 'predictor/prediction/closed_predictions.html'
+
+    def get(self, request,id):
+        user_name = User.objects.filter(id=id).get()
+        context = get_group_tables(request,user_name)
+        context['user_name'] = user_name
+
         return render(request,self.template_name,context)
