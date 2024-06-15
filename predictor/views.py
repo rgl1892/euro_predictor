@@ -68,6 +68,8 @@ class Home(View):
         for i in range(len(users)):
             leaderboard.append([users[i],points[i],exact[i]])
         
+        leaderboard = sorted(leaderboard,key=lambda x: (x[1],x[2]),reverse=True)
+        
         context = {
             'leaderboard':leaderboard
         }
