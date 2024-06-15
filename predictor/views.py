@@ -19,37 +19,40 @@ def check_user_points(request):
 
     filled_in_scores = Prediction.objects.filter(actual='Actual').exclude(score__isnull=True)
     per_match = [[item for item in Prediction.objects.filter(actual='Actual',match_choice__match_number=x).exclude(score__isnull=True)] for x in range(1,51)]
-    users = User.objects.exclude(username='Actual_Scores')
+    users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
     per_match_users =[[[item for item in Prediction.objects.filter(user=user,match_choice__match_number=x).exclude(score__isnull=True)] for x in range(1,51)] for user in users]
     for user_row in per_match_users:
-        for index,matches in enumerate(user_row):
-            if per_match[index] != []:
-                points = 0
-                exact = 0
-                if matches[0].score > matches[1].score and per_match[index][0].score > per_match[index][1].score or matches[0].score < matches[1].score and per_match[index][0].score < per_match[index][1].score:
-                    points += 1
+        if user_row[0] != []:
 
-                if matches[0].score - matches[1].score == per_match[index][0].score - per_match[index][1].score:
-                    points += 1
+            for index,matches in enumerate(user_row):
+                if per_match[index] != []:
+                    points = 0
+                    exact = 0
+                    
+                    if matches[0].score > matches[1].score and per_match[index][0].score > per_match[index][1].score or matches[0].score < matches[1].score and per_match[index][0].score < per_match[index][1].score:
+                        points += 1
 
-                if matches[0].score == per_match[index][0].score and matches[1].score == per_match[index][1].score:
-                    points += 2
-                    exact += 1
-                if matches[0].match_choice.stage == 'Finals':
-                    if matches[0].country == per_match[index][0].country:
-                        points +=1
-                    if matches[1].country == per_match[index][1].country:
-                        points +=1
-                    if matches[0].country == per_match[index][1].country:
-                        points +=1
-                    if matches[1].country == per_match[index][0].country:
-                        points +=1
-                matches[0].points = points
-                matches[1].points = points
-                matches[0].exact = exact
-                matches[1 ].exact = exact
-                matches[0].save()
-                matches[1].save()
+                    if matches[0].score - matches[1].score == per_match[index][0].score - per_match[index][1].score:
+                        points += 1
+
+                    if matches[0].score == per_match[index][0].score and matches[1].score == per_match[index][1].score:
+                        points += 2
+                        exact += 1
+                    if matches[0].match_choice.stage == 'Finals':
+                        if matches[0].country == per_match[index][0].country:
+                            points +=1
+                        if matches[1].country == per_match[index][1].country:
+                            points +=1
+                        if matches[0].country == per_match[index][1].country:
+                            points +=1
+                        if matches[1].country == per_match[index][0].country:
+                            points +=1
+                    matches[0].points = points
+                    matches[1].points = points
+                    matches[0].exact = exact
+                    matches[1 ].exact = exact
+                    matches[0].save()
+                    matches[1].save()
 
     
 class Home(View):
