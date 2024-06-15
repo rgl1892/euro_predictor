@@ -65,12 +65,14 @@
                         >
                         
                     </li>
+                    {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'closed_predictions' %}" aria-current="page"
                             >Closed Predictions
                             </a
                         >
                     </li>
+                    {% endif %}
                 
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'winners' %}" aria-current="page"
@@ -124,7 +126,7 @@
                     <a class="navbar-brand" href="{% url 'logout' %}" class="nav-link active" title="Log Out">Log Out {{user.username}}</a>
                     {% else %}
                     <a class="navbar-brand" href="{% url 'login' %}" class="nav-link active" title="Login">Login</a>
-                    <a class="navbar-brand" href="{% url 'sign_up_user' %}" class="nav-link active" title="sign up user">Sign Up</a>
+                    {% comment %} <a class="navbar-brand" href="{% url 'sign_up_user' %}" class="nav-link active" title="sign up user">Sign Up</a> {% endcomment %}
                     {% endif %}
                 </form>
             </div>
