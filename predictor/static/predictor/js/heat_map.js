@@ -12,17 +12,23 @@ async function get_current_filters() {
     var user = document.getElementById('user_select').value;
     var match_choice = document.getElementById('match').value;
     var url = `api/predictions?user=${user}&match_choice__match_number=${match_choice}`;
+    var actual_url = `api/predictions?user=7&match_choice__match_number=${match_choice}`;
 
     svg.selectAll("*").remove();
     svg.append("text").text("Loading")
 
     var data = await d3.json(url);
+    var actual_data = await d3.json(actual_url);
+    data = d3.filter(data, d => d.user.username != 'Actual_Scores');
 
     svg.selectAll("*").remove();
 
     var home = d3.filter(data, d => d.score != null && d.match_choice.home_away == 'Home');
+    var actual_home = d3.filter(actual_data, d => d.score != null && d.match_choice.home_away == 'Home');
     var away = d3.filter(data, d => d.score != null && d.match_choice.home_away == 'Away');
+    var actual_away = d3.filter(actual_data, d => d.score != null && d.match_choice.home_away == 'Away');
     var scores = d3.transpose([d3.map(home,d => d.score),d3.map(away,d => d.score)]);
+    var actual_scores = d3.transpose([d3.map(actual_home,d => d.score),d3.map(actual_away,d => d.score)]);
     
     var newArray = [];
     for(var element of scores){
@@ -36,6 +42,18 @@ async function get_current_filters() {
         item: JSON.parse(key),
         count: newArray[key]
       }));   
+      var actual_newArray = [];
+      for(var element of actual_scores){
+          if(typeof actual_newArray[JSON.stringify(element)] === 'undefined' || actual_newArray[JSON.stringify(element)] === null){
+            actual_newArray[JSON.stringify(element)] = 1;
+          }else{
+            actual_newArray[JSON.stringify(element)] +=1;
+          }
+        }
+        var actual_result = Object.keys(actual_newArray).map(key => ({
+          item: JSON.parse(key),
+          count: actual_newArray[key]
+        }));  
 
     
 
@@ -95,6 +113,11 @@ async function get_current_filters() {
         .style("left", `${mouse["layerX"] + 20}px`)
         .style("top", `${mouse["layerY"] - 20}px`);
     }
+    var actual_mousemove = function(mouse,d) {
+      tooltip.html( `Actual Score : ${d.item[0]}-${d.item[1]}`)
+        .style("left", `${mouse["layerX"] + 20}px`)
+        .style("top", `${mouse["layerY"] - 20}px`);
+    }
     var mouseleave = function(d) {
       tooltip
         .style("opacity", 0);
@@ -103,7 +126,7 @@ async function get_current_filters() {
         .style("opacity", 1)}
 
     svg.selectAll("rect")
-      .data(result,)
+      .data(result)
       .join("rect")
       .attr("x", function(d) { return x(d.item[0]) })
       .attr("y", function(d) { return y(d.item[1]) })
@@ -116,6 +139,17 @@ async function get_current_filters() {
     .on("mousemove", mousemove)
     .on("mouseleave", mouseleave);
 
+  
+    svg.selectAll("circle")
+      .data(actual_result)
+      .join("circle")
+      .attr("cx", function(d) { return x(d.item[0]) + x.bandwidth()/2 })
+      .attr("cy", function(d) { return y(d.item[1]) + y.bandwidth()/2 })
+      .attr("r", 12 )
+      .style("fill", "white" )
+    .on("mouseover", mouseover)
+    .on("mousemove", actual_mousemove)
+    .on("mouseleave", mouseleave);
 }
 
 
