@@ -4,9 +4,6 @@
 <script src="{% static 'predictor/js/d3.v7.js' %}" ></script>
 <div class="container">
     <div class="row">
-        
-            
-            <script type="module" src="{% static 'predictor/js/heat_2.js' %}"></script>
             <div class="mb-3">
                 <label for="" class="form-label">User</label>
                 <select
@@ -33,28 +30,31 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-12 col-lg-6" id="heat_div">
+        <div class="col-12 col-lg-6" id="heat_div">
             <div id="heat_map">
                 <h3>Heat map of scores</h3>
+                <script type="module" src="{% static 'predictor/js/heat_map.js' %}"></script>
+            </div>   
+        </div>
+        <div class="col-12 col-lg-6" id="points_div">
+            <script type="module" src="{% static 'predictor/js/points_progress.js' %}"></script>
+            <div id="points_map">
+                <h3>User Points Progress</h3>
             </div>
-            
-            
         </div>
         <div class="col-12 col-lg-6" id="goal_div">
-            
             <script type="module" src="{% static 'predictor/js/total_goals.js' %}"></script>
             <div id="goals_map">
                 <h3>Total goals per Country</h3>
             </div>
-            
         </div>
         <div class="col-12 col-lg-6" id="patriot_div">
-            
             <script type="module" src="{% static 'predictor/js/patriot.js' %}"></script>
             <div id="patriot_map">
                 <h3>User Goals for England</h3>
             </div>
-    </div>
+        </div> 
+        
 </div>
 
 {% endblock %}

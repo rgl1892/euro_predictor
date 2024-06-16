@@ -105,3 +105,4 @@ async function get_current_filters() {
 }
 
 document.getElementById('user_select').addEventListener('change',get_current_filters);
+get_current_filters()
