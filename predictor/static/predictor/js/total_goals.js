@@ -66,7 +66,7 @@ async function get_current_filters() {
   
       }
       var mousemove = function(mouse,d) {
-        console.log(d);
+
         tooltip.html( `${d.goals} for ${d.country}`)
           .style("left", `${mouse["layerX"] + 20}px`)
           .style("top", `${mouse["layerY"] - 20}px`);

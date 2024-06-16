@@ -30,7 +30,6 @@ async function get_current_filters() {
 
     user_data = d3.sort(user_data,(a,b) => d3.descending(a.goals,b.goals))
 
-    console.log(user_data);
 
 
     var x = d3.scaleBand()
@@ -71,7 +70,6 @@ async function get_current_filters() {
   
       }
       var mousemove = function(mouse,d) {
-        console.log(d);
         tooltip.html( `${d.user} says ${d.goals} for England`)
           .style("left", `${mouse["layerX"] + 20}px`)
           .style("top", `${mouse["layerY"] - 20}px`);

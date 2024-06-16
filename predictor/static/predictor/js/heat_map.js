@@ -19,16 +19,31 @@ async function get_current_filters() {
 
     var data = await d3.json(url);
     var actual_data = await d3.json(actual_url);
+    var actual_home = d3.filter(actual_data, d => d.score != null && d.match_choice.home_away == 'Home');
+    var actual_away = d3.filter(actual_data, d => d.score != null && d.match_choice.home_away == 'Away');
+    var actual_scores = d3.transpose([d3.map(actual_home,d => d.score),d3.map(actual_away,d => d.score)]);
+    var actual_newArray = [];
+      for(var element of actual_scores){
+          if(typeof actual_newArray[JSON.stringify(element)] === 'undefined' || actual_newArray[JSON.stringify(element)] === null){
+            actual_newArray[JSON.stringify(element)] = 1;
+          }else{
+            actual_newArray[JSON.stringify(element)] +=1;
+          }
+        }
+        var actual_result = Object.keys(actual_newArray).map(key => ({
+          item: JSON.parse(key),
+          count: actual_newArray[key]
+        }));  
     data = d3.filter(data, d => d.user.username != 'Actual_Scores');
 
     svg.selectAll("*").remove();
 
     var home = d3.filter(data, d => d.score != null && d.match_choice.home_away == 'Home');
-    var actual_home = d3.filter(actual_data, d => d.score != null && d.match_choice.home_away == 'Home');
+    
     var away = d3.filter(data, d => d.score != null && d.match_choice.home_away == 'Away');
-    var actual_away = d3.filter(actual_data, d => d.score != null && d.match_choice.home_away == 'Away');
+    
     var scores = d3.transpose([d3.map(home,d => d.score),d3.map(away,d => d.score)]);
-    var actual_scores = d3.transpose([d3.map(actual_home,d => d.score),d3.map(actual_away,d => d.score)]);
+    
     
     var newArray = [];
     for(var element of scores){
