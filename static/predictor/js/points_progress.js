@@ -1,4 +1,4 @@
-var margin = { top: 30, right: 50, bottom: 50, left: 50 },
+var margin = { top: 30, right: 10, bottom: 50, left: 50 },
   width =
     document.getElementById("points_div").offsetWidth -
     margin.left -
@@ -24,6 +24,7 @@ async function get_current_filters() {
   data = d3.filter(data, (d) => d.score != null);
   data = d3.filter(data, (d) => d.user.username != "Actual_Scores");
   data = d3.filter(data, (d) => d.match_choice.home_away == "Home");
+  var last_game = d3.max(d3.filter(data,d => d.points !=null),d => d.match_choice.match_number.match_number);
 
   data = d3.rollups(
     data,
@@ -34,10 +35,11 @@ async function get_current_filters() {
 
   data = d3.map(data, (d) => [d[0], d3.cumsum(d[1], (e) => e[1]),d3.sum(d[1],d=>d[1])]);
   var max_points = d3.max(data,d => d[2]);
+  
 
   const y = d3.scaleLinear().domain([0, max_points]).nice().range([height, 0]);
 
-  const x = d3.scaleLinear().domain([0, 51]).range([0, width]);
+  const x = d3.scaleLinear().domain([1, last_game+1]).range([0, width]);
 
   svg
     .append("g")
