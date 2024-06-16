@@ -32,9 +32,10 @@ async function get_current_filters() {
     (d) => d.match_choice.match_number.match_number
   );
 
-  data = d3.map(data, (d) => [d[0], d3.cumsum(d[1], (e) => e[1])]);
+  data = d3.map(data, (d) => [d[0], d3.cumsum(d[1], (e) => e[1]),d3.sum(d[1],d=>d[1])]);
+  var max_points = d3.max(data,d => d[2]);
 
-  const y = d3.scaleLinear().domain([0, 30]).nice().range([height, 0]);
+  const y = d3.scaleLinear().domain([0, max_points]).nice().range([height, 0]);
 
   const x = d3.scaleLinear().domain([0, 51]).range([0, width]);
 
@@ -46,13 +47,12 @@ async function get_current_filters() {
   svg.append("g").call(d3.axisLeft(y));
 
   const myColor = d3.scaleSequential(d3.interpolatePlasma)
-        .domain([0,40]);
+                .domain([0,max_points]);
 
-  d3.map(data, d => console.log(d[0]));
   
   const line = d3.line()
   .x((d,i) => x(i+1))
-  .y((d,i) => y(d));
+  .y((d,i) => y(d)).curve(d3.curveBasis);
 
   var tooltip = d3.select("#points_map")
   .append("div")
@@ -68,7 +68,6 @@ async function get_current_filters() {
   var mouseover = function(d) {
         tooltip.style("opacity", 1);
         d3.select(this)
-        //   .style("stroke", "black")
         .attr('stroke-width', 4)
           .style("opacity", 1);
   
@@ -83,9 +82,8 @@ async function get_current_filters() {
         tooltip
           .style("opacity", 0);
         d3.select(this)
-          .style("stroke", "#AFACE1")
           .attr('stroke-width', 2)
-          .style("opacity", 0.7)}
+          .style("opacity", 0.8)}
 
 svg.append("g")
   .selectAll('.line')
@@ -93,8 +91,9 @@ svg.append("g")
   .join('path')
     .attr('class', 'line')
     .attr('fill', 'none')
-    .attr('stroke', '#AFACE1')
-    .attr('opacity', 0.5)
+    .attr('stroke', (d)  => myColor(d[2]))
+
+    .attr('opacity', 0.8)
 
     .attr('stroke-width', 2)
     .attr('d', d => line(d[1]))

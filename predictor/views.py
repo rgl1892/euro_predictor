@@ -50,7 +50,7 @@ def check_user_points(request):
                     matches[0].points = points
                     matches[1].points = points
                     matches[0].exact = exact
-                    matches[1 ].exact = exact
+                    matches[1].exact = exact
                     matches[0].save()
                     matches[1].save()
 
