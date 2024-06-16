@@ -36,7 +36,7 @@ async function get_current_filters() {
 
   const y = d3.scaleLinear().domain([0, 30]).nice().range([height, 0]);
 
-  const x = d3.scaleLinear().domain([0, 51]).nice().range([0, width]);
+  const x = d3.scaleLinear().domain([0, 51]).range([0, width]);
 
   svg
     .append("g")
@@ -51,7 +51,7 @@ async function get_current_filters() {
   d3.map(data, d => console.log(d[0]));
   
   const line = d3.line()
-  .x((d,i) => x(i))
+  .x((d,i) => x(i+1))
   .y((d,i) => y(d));
 
   var tooltip = d3.select("#points_map")
@@ -68,8 +68,9 @@ async function get_current_filters() {
   var mouseover = function(d) {
         tooltip.style("opacity", 1);
         d3.select(this)
-          .style("stroke", "black")
-          .style("opacity", 0.8);
+        //   .style("stroke", "black")
+        .attr('stroke-width', 4)
+          .style("opacity", 1);
   
       }
       var mousemove = function(mouse,d) {
@@ -82,8 +83,9 @@ async function get_current_filters() {
         tooltip
           .style("opacity", 0);
         d3.select(this)
-          .style("stroke", "white")
-          .style("opacity", 1)}
+          .style("stroke", "#AFACE1")
+          .attr('stroke-width', 2)
+          .style("opacity", 0.7)}
 
 svg.append("g")
   .selectAll('.line')
@@ -91,7 +93,9 @@ svg.append("g")
   .join('path')
     .attr('class', 'line')
     .attr('fill', 'none')
-    .attr('stroke', 'white')
+    .attr('stroke', '#AFACE1')
+    .attr('opacity', 0.5)
+
     .attr('stroke-width', 2)
     .attr('d', d => line(d[1]))
     .on("mouseover", mouseover)
