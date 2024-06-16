@@ -29,7 +29,7 @@ def check_user_points(request):
                     points = 0
                     exact = 0
                     
-                    if matches[0].score > matches[1].score and per_match[index][0].score > per_match[index][1].score or matches[0].score < matches[1].score and per_match[index][0].score < per_match[index][1].score:
+                    if matches[0].score >= matches[1].score and per_match[index][0].score >= per_match[index][1].score or matches[0].score <= matches[1].score and per_match[index][0].score <= per_match[index][1].score:
                         points += 1
 
                     if matches[0].score - matches[1].score == per_match[index][0].score - per_match[index][1].score:
