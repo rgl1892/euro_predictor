@@ -22,7 +22,9 @@ async function get_current_filters() {
     var data = await d3.json(url);
 
     data = d3.filter(data, d => d.user.username != 'Actual_Scores');
-    data = d3.map(data,d => [d.score,d.user.username,d.match_choice.home_away])
+    var home_name = d3.filter(data, d => d.score != null && d.match_choice.home_away == 'Home');
+    var away_name = d3.filter(data, d => d.score != null && d.match_choice.home_away == 'Away');
+    data = d3.map(data,d => [d.score,d.user.username,d.match_choice.home_away]);
     svg.selectAll("*").remove();
     // console.log(data)
     var home = d3.filter(data, d => d[0] != null && d[2] == 'Home');
@@ -67,6 +69,22 @@ async function get_current_filters() {
       .call(d3.axisLeft(y));
     const myColor = d3.scaleSequential(d3.interpolatePlasma)
       .domain([0,7]);
+
+    console.log(home_name)
+      svg.append("text")
+      .attr("class", "x label")
+      .attr("text-anchor", "end")
+      .attr("x", width)
+      .attr("y", height + 40)
+      .text(`${home_name[0].country}`);
+    svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", 6)
+    .attr("x", 0)
+    .attr("dy", ".75em")
+    .attr("transform", "rotate(-90)")
+    .text(`${away_name[0].country}`);
 
     var tooltip = d3.select("#heat_map")
       .append("div")
