@@ -23,9 +23,8 @@ def check_user_points(request):
     per_match_users =[[[item for item in Prediction.objects.filter(user=user,match_choice__match_number=x).exclude(score__isnull=True)] for x in range(1,51)] for user in users]
     for user_row in per_match_users:
         if user_row[0] != []:
-
             for index,matches in enumerate(user_row):
-                if per_match[index] != []:
+                if per_match[index] != [] and matches != []:
                     points = 0
                     exact = 0
                     
@@ -69,6 +68,17 @@ class Home(View):
             leaderboard.append([users[i],points[i],exact[i]])
         
         leaderboard = sorted(leaderboard,key=lambda x: (x[1],x[2]),reverse=True)
+        max_number = max([x[2] for x in leaderboard])
+        min_number = min([x[2] for x in leaderboard])
+        min_array = [x for x in leaderboard if x[2] == min_number][0]
+
+        for row in leaderboard:
+            if row[2] == max_number:
+                row.append(1)
+            elif row == min_array:
+                row.append(2)
+            else:
+                row.append(0)        
         
         context = {
             'leaderboard':leaderboard
