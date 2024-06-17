@@ -1,6 +1,6 @@
 var margin = { top: 30, right: 50, bottom: 50, left: 30 },
         width = document.getElementById("heat_div").offsetWidth - margin.left - margin.right,
-        height = document.getElementById("heat_div").offsetWidth*3/6 - margin.top - margin.bottom;
+        height = document.getElementById("heat_div").offsetWidth*3/6 >400 ? document.getElementById("heat_div").offsetWidth*3/6 : 400 - margin.top - margin.bottom;
 
 var svg = d3.select('#heat_map').append('svg')
         .attr('width', width + margin.left + margin.right)
