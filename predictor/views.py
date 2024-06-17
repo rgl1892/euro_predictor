@@ -448,7 +448,7 @@ class ActualView(View):
     template_name = 'predictor/actual/actual.html'
 
     def get(self, request):
-        check_user_points(request)
+        
         context = get_group_tables(request,request.user)
         return render(request,self.template_name,context)
     
@@ -668,7 +668,7 @@ class ActualView(View):
                     else:
                         winners.append(match_played[1].country)
                 Winner.objects.update_or_create(user=request.user,winner=winners[0])
-
+        check_user_points(request)
         context = get_group_tables(request,request.user)
         
         return render(request,self.template_name,context)
