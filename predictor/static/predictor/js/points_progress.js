@@ -15,7 +15,7 @@ var svg = d3
 
 async function get_current_filters() {
   var user = document.getElementById("user_select").value;
-  var url = `api/predictions?user=${user}`;
+  var url = `/api/predictions?user=${user}`;
 
   svg.selectAll("*").remove();
   svg.append("text").text("Loading");

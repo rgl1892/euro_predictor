@@ -1,6 +1,6 @@
 var margin = { top: 30, right: 50, bottom: 50, left: 30 },
         width = document.getElementById("heat_div").offsetWidth - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
+        height = document.getElementById("heat_div").offsetWidth*3/6 - margin.top - margin.bottom;
 
 var svg = d3.select('#heat_map').append('svg')
         .attr('width', width + margin.left + margin.right)
@@ -11,8 +11,8 @@ var svg = d3.select('#heat_map').append('svg')
 async function get_current_filters() {
     var user = document.getElementById('user_select').value;
     var match_choice = document.getElementById('match').value;
-    var url = `api/predictions?user=${user}&match_choice__match_number=${match_choice}`;
-    var actual_url = `api/predictions?user=7&match_choice__match_number=${match_choice}`;
+    var url = `/api/predictions?user=${user}&match_choice__match_number=${match_choice}`;
+    var actual_url = `/api/predictions?user=7&match_choice__match_number=${match_choice}`;
 
     
 
@@ -68,9 +68,11 @@ async function get_current_filters() {
     svg.append("g")
       .call(d3.axisLeft(y));
     const myColor = d3.scaleSequential(d3.interpolatePlasma)
-      .domain([0,7]);
+      .domain([0,d3.max(d3.map(data, d => d[1].length))]);
+      
 
-    console.log(home_name)
+    
+
       svg.append("text")
       .attr("class", "x label")
       .attr("text-anchor", "end")
@@ -153,7 +155,7 @@ async function get_current_filters() {
       .join("circle")
       .attr("cx", function(d) { return x(d.item[0]) + x.bandwidth()/2 })
       .attr("cy", function(d) { return y(d.item[1]) + y.bandwidth()/2 })
-      .attr("r", 12 )
+      .attr("r", y.bandwidth()*2/6 )
       .style("fill", "white" )
     .on("mouseover", mouseover)
     .on("mousemove", actual_mousemove)

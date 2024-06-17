@@ -686,6 +686,20 @@ class StatsView(View):
         }
     
         return render(request,self.template_name,context)
+
+class HeatView(View):
+    template_name = 'predictor/stats/heat_map.html'
+
+    def get(self,request):
+        users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
+        matches = Match.objects.all()
+        teams_per_match = [Prediction.objects.filter(user__username='Actual_Scores',match_choice__match_number=item.match_number) for item in matches]
+        context = {
+            'users':users,
+            'teams_per_match':teams_per_match,
+        }
+    
+        return render(request,self.template_name,context)
     
 class AccountView(View):
 

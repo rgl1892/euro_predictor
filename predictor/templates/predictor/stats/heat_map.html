@@ -1,0 +1,43 @@
+{% extends 'predictor/base.html' %}
+{% block content %}
+{% load static %}
+<script src="{% static 'predictor/js/d3.v7.js' %}" ></script>
+<div class="container">
+    <div class="row">
+            <div class="mb-3">
+                <label for="" class="form-label">User</label>
+                <select
+                    class="form-select form-select-lg"
+                    name=""
+                    id="user_select"
+                >
+                    <option selected value=''>All</option>
+                    {% for user in users %}
+                    <option value='{{user.id}}'>{{user.username}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="" class="form-label">Match</label>
+                <select
+                    class="form-select form-select-lg"
+                    name=""
+                    id="match"
+                >
+                    <option selected value=''>All</option>
+                    {% for match in teams_per_match %}
+                    <option value='{{match.0.match_choice.match_number}}'>{{match.0.match_choice.match_number}}: {{match.0.country}} vs {{match.1.country}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        <div class="col-12" id="heat_div">
+            <div id="heat_map">
+                <h3>Heat map of scores</h3>
+                <script type="module" src="{% static 'predictor/js/heat_map.js' %}"></script>
+            </div>   
+        </div>
+        
+        
+</div>
+
+{% endblock %}
