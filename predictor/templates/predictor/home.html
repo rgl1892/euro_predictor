@@ -33,6 +33,7 @@
                 <thead>
                     <tr>
                         <th scope="col">Username</th>
+                        <th scope="col">Name name</th>
                         <th scope="col">Points</th>
                         <th scope="col">Exact Results</th>
                         <th scope="col">Predictions</th>
@@ -43,8 +44,11 @@
                     <tr  title={% if row.3 == 1 %}"The Octopus" {% elif row.3 == 2 %}"The Noctopus"{% endif %}"">
                         
                         <td scope="row">{{row.0}}</td>
+                        <td>{{row.0.first_name}} {{row.0.last_name}}</td>
+
                         <td>{{row.1}}</td>
                         <td>{{row.2}}</td>
+
                         <td><a href="{% url 'predictions'  id=row.0.id %}">Predictions</a></td>
                     </tr>
                     {% endfor %}
