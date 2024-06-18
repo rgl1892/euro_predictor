@@ -205,7 +205,7 @@ def get_group_tables(request,user_name):
 
 class PredictionView(View):
 
-    template_name = 'predictor/prediction/prediction.html'
+    template_name = 'predictor/prediction/closed_predictions.html'
 
     def get(self, request):
         context = get_group_tables(request,request.user)
