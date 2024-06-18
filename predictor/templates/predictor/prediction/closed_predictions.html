@@ -1,6 +1,7 @@
 {% extends 'predictor/base.html' %}
 {% block content %}
 {% load static %}
+{% load tz %}
 <div class="container">
                     
             <h1>{{user_name}}</h1>
@@ -28,7 +29,7 @@
     <tbody>
         {% for match in group %}
             <tr class="">
-                <td class="d-none d-lg-table-cell">{{match.0.match_choice.date|date:"D d M Y H:s e"}}</td>
+                <td class="d-none d-lg-table-cell">{{match.0.match_choice.date|timezone:"Europe/London"|date:"D d M Y H:s e"}}</td>
                 <td class="text-end">{{match.0.match_choice.country.name}}</td>
                 <td>{{match.0.score}}</td>
                 <td>{{match.1.score}}</td>
@@ -126,7 +127,7 @@
         <div class="card m-1">
             <div class="card-body d-flex flex-column">
                 <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
-                <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
+                <h6 class="card-title text-center">{{match.0.match_choice.date|timezone:"Europe/London"}}</h5>
                 <div class="d-flex justify-content-center">
                     <div>
                         {% if match.0.score != None %}
@@ -194,7 +195,7 @@
                 <div class="card m-1">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
-                        <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
+                        <h6 class="card-title text-center">{{match.0.match_choice.date|timezone:"Europe/London"}}</h5>
                         <div class="d-flex justify-content-center">
                             <div>
                                 {% if match.0.score != None %}
@@ -263,7 +264,7 @@
                 <div class="card m-1">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
-                        <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
+                        <h6 class="card-title text-center">{{match.0.match_choice.date|timezone:"Europe/London"}}</h5>
                         <div class="d-flex justify-content-center">
                             <div>
                                 {% if match.0.score != None %}
@@ -333,7 +334,7 @@
                     <div class="card m-1">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
-                            <h6 class="card-title text-center">{{match.0.match_choice.date}}</h5>
+                            <h6 class="card-title text-center">{{match.0.match_choice.date|timezone:"Europe/London"}}</h5>
                             <div class="d-flex justify-content-center">
                                 <div>
                                     {% if match.0.score != None %}
