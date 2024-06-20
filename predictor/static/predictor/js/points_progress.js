@@ -1,4 +1,4 @@
-var margin = { top: 30, right: 10, bottom: 50, left: 50 },
+var margin = { top: 30, right: 50, bottom: 50, left: 50 },
   width =
     document.getElementById("points_div").offsetWidth -
     margin.left -
@@ -25,6 +25,7 @@ async function get_current_filters() {
   data = d3.filter(data, (d) => d.user.username != "Actual_Scores");
   data = d3.filter(data, (d) => d.match_choice.home_away == "Home");
   var last_game = d3.max(d3.filter(data,d => d.points !=null),d => d.match_choice.match_number.match_number);
+
 
   data = d3.rollups(
     data,
@@ -72,6 +73,9 @@ async function get_current_filters() {
         d3.select(this)
         .attr('stroke-width', 4)
           .style("opacity", 1);
+
+          d3.selectAll(`#${this.id}`).attr('stroke-width', 4)
+          .style("opacity", 1);
   
       }
       var mousemove = function(mouse,d) {
@@ -85,6 +89,9 @@ async function get_current_filters() {
           .style("opacity", 0);
         d3.select(this)
           .attr('stroke-width', 2)
+          .style("opacity", 0.8);
+          d3.selectAll(`#${this.id}`)
+          .attr('stroke-width', 2)
           .style("opacity", 0.8)}
 
 svg.append("g")
@@ -92,6 +99,7 @@ svg.append("g")
   .data(data)
   .join('path')
     .attr('class', 'line')
+    .attr('id',(d) => d[0].replace(" ","_").replace("'","").replace("@","") + '_line')
     .attr('fill', 'none')
     .attr('stroke', (d)  => myColor(d[2]))
 
@@ -102,7 +110,25 @@ svg.append("g")
     .on("mouseover", mouseover)
     .on("mousemove", mousemove)
     .on("mouseleave", mouseleave);
+
+    svg
+    .selectAll(".legend")
+    .data(data)
+    .enter()
+    .append('text')
+    .attr('id',(d) => d[0].replaceAll(" ","_").replace("'","").replace("@","") + '_line')
+    .attr("y", (d,i) => i*20)
+    .attr("x", 5)
+    .attr("dy", ".75em")
+      .text((d) => d[0])
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave);
+        
+
+
 }
+
 
 document
   .getElementById("user_select")
