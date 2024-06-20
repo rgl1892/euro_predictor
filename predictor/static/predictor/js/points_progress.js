@@ -71,10 +71,10 @@ async function get_current_filters() {
   var mouseover = function(d) {
         tooltip.style("opacity", 1);
         d3.select(this)
-        .attr('stroke-width', 4)
+        .attr('stroke-width', 8)
           .style("opacity", 1);
 
-          d3.selectAll(`#${this.id}`).attr('stroke-width', 4)
+          d3.selectAll(`#${this.id}`).attr('stroke-width', 8)
           .style("opacity", 1);
   
       }
