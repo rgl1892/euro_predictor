@@ -4,6 +4,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 
+from collections import Counter
+
 from .forms import EditAuthForm,EditUserForm,AccountForm
 from .models import Country,Group,Score,Prediction,Match,Winner
 
@@ -80,8 +82,33 @@ class Home(View):
             elif row == min_array:
                 row.append(2)
             else:
-                row.append(0)        
-        
+                row.append(0)  
+
+        for x in range(len(leaderboard)):
+            
+            if x ==0:
+                leaderboard[x].append(1)
+            else:
+                if leaderboard[x][1] == leaderboard[x-1][1]:
+                    leaderboard[x].append(leaderboard[x-1][4])
+                else:
+                    leaderboard[x].append(leaderboard[x-1][4]+1)
+
+        transposed = list(map(list, zip(*leaderboard)))
+        transposed_col = list(map(list, zip(*leaderboard)))[4]
+        count_col = []
+        count_val = Counter(transposed_col)
+        for x in transposed_col:
+            count_col.append(count_val[x])
+        transposed.append(count_col)
+        leaderboard = list(map(list, zip(*transposed)))
+
+        for x in range(len(leaderboard)):
+            if leaderboard[x][5] > 1:
+                leaderboard[x].append(f'{leaderboard[x][4]}=')
+            else:
+                leaderboard[x].append(f'{leaderboard[x][4]}')
+
         context = {
             'leaderboard':leaderboard
         }

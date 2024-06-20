@@ -32,6 +32,7 @@
             >
                 <thead>
                     <tr>
+                        <th scope="col">Place</th>
                         <th scope="col">Username</th>
                         <th scope="col">Name name</th>
                         <th scope="col">Points</th>
@@ -43,6 +44,7 @@
                     {% for row in leaderboard %}
                     <tr  title={% if row.3 == 1 %}"The Octopus" {% elif row.3 == 2 %}"The Noctopus"{% endif %}"">
                         
+                        <td scope="row">{{row.6}}</td>
                         <td scope="row">{{row.0}}</td>
                         <td>{{row.0.first_name}} {{row.0.last_name}}</td>
 
