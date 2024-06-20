@@ -25,6 +25,7 @@ async function get_current_filters() {
   data = d3.filter(data, (d) => d.user.username != "Actual_Scores");
   data = d3.filter(data, (d) => d.match_choice.home_away == "Home");
   var last_game = d3.max(d3.filter(data,d => d.points !=null),d => d.match_choice.match_number.match_number);
+  data = d3.filter(data,(d) => d.match_choice.match_number.match_number <= last_game+1);
 
 
   data = d3.rollups(
@@ -80,7 +81,7 @@ async function get_current_filters() {
       }
       var mousemove = function(mouse,d) {
 
-        tooltip.html(d[0])
+        tooltip.html(d[0] +" "+d[2] )
           .style("left", `${mouse["layerX"] + 20}px`)
           .style("top", `${mouse["layerY"] - 20}px`);
       }
@@ -100,9 +101,9 @@ svg.append("g")
   .join('path')
     .attr('class', 'line')
     .attr('id',(d) => d[0].replaceAll(" ","_")
-                          .replaceAll("'","")
-                          .replaceAll("@","")
-                          .replaceAll(".","") + '_line')
+                          .replace("'","")
+                          .replace("@","")
+                          .replace(".","") + '_line')
     .attr('fill', 'none')
     .attr('stroke', (d)  => myColor(d[2]))
 
@@ -120,8 +121,8 @@ svg.append("g")
     .enter()
     .append('text')
     .attr('id',(d) => d[0].replaceAll(" ","_")
-                          .replaceAll("'","")
-                          .replaceAll("@","")
+                          .replace("'","")
+                          .replace("@","")
                           .replaceAll(".","") + '_line')
                           .style("opacity", 0.8)
     .attr("y", (d,i) => i%6*20)

@@ -25,6 +25,7 @@ async function get_current_filters() {
   data = d3.filter(data, (d) => d.user.username != "Actual_Scores");
   data = d3.filter(data, (d) => d.match_choice.home_away == "Home");
   var last_game = d3.max(d3.filter(data,d => d.points !=null),d => d.match_choice.match_number.match_number);
+  data = d3.filter(data,(d) => d.match_choice.match_number.match_number <= last_game+1);
 
 
   data = d3.rollups(
@@ -80,7 +81,7 @@ async function get_current_filters() {
       }
       var mousemove = function(mouse,d) {
 
-        tooltip.html(d[0])
+        tooltip.html(d[0] +" "+d[2] )
           .style("left", `${mouse["layerX"] + 20}px`)
           .style("top", `${mouse["layerY"] - 20}px`);
       }
