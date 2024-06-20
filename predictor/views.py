@@ -83,16 +83,19 @@ class Home(View):
                 row.append(2)
             else:
                 row.append(0)  
-
+        counter = 0
         for x in range(len(leaderboard)):
             
+
             if x ==0:
                 leaderboard[x].append(1)
             else:
                 if leaderboard[x][1] == leaderboard[x-1][1]:
                     leaderboard[x].append(leaderboard[x-1][4])
+                    counter += 1
                 else:
-                    leaderboard[x].append(leaderboard[x-1][4]+1)
+                    leaderboard[x].append(leaderboard[x-1][4]+1+counter)
+                    counter = 0
 
         transposed = list(map(list, zip(*leaderboard)))
         transposed_col = list(map(list, zip(*leaderboard)))[4]
