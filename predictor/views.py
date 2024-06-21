@@ -6,6 +6,7 @@ from django.db import IntegrityError
 
 from collections import Counter
 from datetime import datetime
+import math
 
 from .forms import EditAuthForm,EditUserForm,AccountForm
 from .models import Country,Group,Score,Prediction,Match,Winner
@@ -115,15 +116,6 @@ class Home(View):
     template_name = 'predictor/home.html'
 
     def get(self, request):    
-
-        home = Prediction.objects.filter(user__username='devashusharma',
-                                        match_choice__match_number=51,
-                                        match_choice__home_away='Home')
-        home.update(score=3)
-        away = Prediction.objects.filter(user__username='devashusharma',
-                                        match_choice__match_number=51,
-                                        match_choice__home_away='Away')
-        away.update(score=1)
         leaderboard = calculate_leaderboard()
 
         today_date = datetime.strftime(datetime.today(),"%Y-%m-%d")
@@ -864,13 +856,53 @@ class PerPlayerStats(View):
 
                     
                     
-            stuff.append({'name':user_name,'home_wins':home_wins,'away_wins':away_wins,'draws':draws,
-                          'a_points':a_points,'b_points':b_points,'c_points':c_points,'d_points':d_points,
-                          'e_points':e_points,'f_points':f_points,'finals_points':finals_points,
-                          'total_points':a_points+b_points+c_points+d_points+e_points+f_points+finals_points,
-                          'hhmm':home_wins+away_wins+draws
+            stuff.append({
+                'name':user_name,'home_wins':home_wins,'away_wins':away_wins,'draws':draws,
+                'a_points':a_points,'b_points':b_points,'c_points':c_points,'d_points':d_points,
+                'e_points':e_points,'f_points':f_points,'finals_points':finals_points,
+                'total_points':a_points+b_points+c_points+d_points+e_points+f_points+finals_points,
+                'draw_percent':math.ceil((draws/(home_wins+away_wins+draws))*100),
+                'home_percent':round((home_wins/(home_wins+away_wins+draws))*100),
+                'away_percent':round((away_wins/(home_wins+away_wins+draws))*100),
                           })
-                    
+        total_h_wins = 0
+        total_draw = 0
+        total_a_wins = 0
+        total_a = 0
+        total_b = 0
+        total_c = 0
+        total_d = 0
+        total_e = 0
+        total_f = 0
+        total_fin = 0
+        people = len(stuff)
+        for row in stuff:
+            total_h_wins += row['home_wins']
+            total_draw += row['draws']
+            total_a_wins += row['away_wins']
+            total_a += row['a_points']
+            total_b += row['b_points']
+            total_c += row['c_points']
+            total_d += row['d_points']
+            total_e += row['e_points']
+            total_f += row['f_points']
+            total_fin += row['finals_points']
+        stuff.append({'name':'Total','home_wins':total_h_wins,'away_wins':total_a_wins,'draws':total_draw,
+                'a_points':total_a,'b_points':total_b,'c_points':total_c,'d_points':total_d,
+                'e_points':total_e,'f_points':total_f,'finals_points':total_fin,
+                'total_points':total_a+total_b+total_c+total_d+total_e+total_f+total_fin,
+                'draw_percent':math.ceil((total_draw/(total_h_wins+total_a_wins+draws))*100),
+                'home_percent':round((total_h_wins/(total_h_wins+total_a_wins+total_draw))*100),
+                'away_percent':round((total_a_wins/(total_h_wins+total_a_wins+total_draw))*100),})
+        
+        stuff.append({'name':'Average','home_wins':round(total_h_wins/people,1),'away_wins':round(total_a_wins/people,1),'draws':round(total_draw/people,1),
+                'a_points':round(total_a/people,1),'b_points':round(total_b/people,1),'c_points':round(total_c/people,1),'d_points':round(total_d/people,1),
+                'e_points':round(total_e/people,1),'f_points':round(total_f/people,1),'finals_points':round(total_fin/people,1),
+                'total_points':round((total_a+total_b+total_c+total_d+total_e+total_f+total_fin)/people,1),
+                'draw_percent':math.ceil((total_draw/(total_h_wins+total_a_wins+draws))*100),
+                'home_percent':round((total_h_wins/(total_h_wins+total_a_wins+total_draw))*100),
+                'away_percent':round((total_a_wins/(total_h_wins+total_a_wins+total_draw))*100),})
+
         
         context = {
             'stuff':stuff
