@@ -25,7 +25,7 @@ async function get_current_filters() {
   data = d3.filter(data, (d) => d.user.username != "Actual_Scores");
   data = d3.filter(data, (d) => d.match_choice.home_away == "Home");
   var last_game = d3.max(d3.filter(data,d => d.points !=null),d => d.match_choice.match_number.match_number);
-  data = d3.filter(data,(d) => d.match_choice.match_number.match_number <= last_game+1);
+  data = d3.filter(data,(d) => d.match_choice.match_number.match_number <= last_game);
 
 
   data = d3.rollups(
@@ -41,7 +41,7 @@ async function get_current_filters() {
 
   const y = d3.scaleLinear().domain([0, max_points]).nice().range([height, 0]);
 
-  const x = d3.scaleLinear().domain([1, last_game+1]).range([0, width]);
+  const x = d3.scaleLinear().domain([1, last_game]).range([0, width]);
 
   svg
     .append("g")
@@ -56,7 +56,10 @@ async function get_current_filters() {
   
   const line = d3.line()
   .x((d,i) => x(i+1))
-  .y((d,i) => y(d)).curve(d3.curveBasis);
+  .y((d,i) => y(d))
+  // .curve(d3.curveBasis)
+  .curve(d3.curveMonotoneX)
+  ;
 
   var tooltip = d3.select("#points_map")
   .append("div")

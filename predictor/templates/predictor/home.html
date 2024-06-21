@@ -1,5 +1,6 @@
 {% extends 'predictor/base.html' %}
 {% block content %}
+{% load tz %}
 <div class="container">
     <div class="row">
         <div class="col-12 col-lg-6">
@@ -17,6 +18,13 @@
                 Total of 6 points available for final matches
             </p>
             
+        </div>
+        <div class="col-12 col-lg-6 text-center">
+            <h3>Today's Games</h3>
+            {% for match in today_matches %}
+            <h4>{{match.0.country.name  }} vs {{match.1.country.name}} : {{match.0.date|timezone:"Europe/London"|date:"H:s e"}}</h4>
+
+            {% endfor %}
         </div>
     </div>
     <div class="row">

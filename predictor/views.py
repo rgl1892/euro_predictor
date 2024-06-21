@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 
 from collections import Counter
+from datetime import datetime
 
 from .forms import EditAuthForm,EditUserForm,AccountForm
 from .models import Country,Group,Score,Prediction,Match,Winner
@@ -112,8 +113,15 @@ class Home(View):
             else:
                 leaderboard[x].append(f'{leaderboard[x][4]}')
 
+        today_date = datetime.strftime(datetime.today(),"%Y-%m-%d")
+        today_matches = Score.objects.filter(date__date=today_date)
+        today_matches = [today_matches[i:i+2] for i in range(0,len(today_matches),2)]
+    
+        
+
         context = {
-            'leaderboard':leaderboard
+            'leaderboard':leaderboard,
+            'today_matches':today_matches
         }
         return render(request, self.template_name,context)
 
