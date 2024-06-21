@@ -1,0 +1,51 @@
+{% extends 'predictor/base.html' %}
+{% block content %}
+<div class="container">
+
+    <div
+    class="table-responsive"
+    >
+    <table
+    class="table table-primary"
+    >
+    <thead>
+        <tr>
+            <th scope="col">User</th>
+            <th scope="col">Home wins</th>
+            <th scope="col">Draws</th>
+            <th scope="col">Away wins</th>
+            <th scope="col">A</th>
+            <th scope="col">B</th>
+            <th scope="col">C</th>
+            <th scope="col">D</th>
+            <th scope="col">E</th>
+            <th scope="col">F</th>
+            <th scope="col">Finals</th>
+            <th scope="col">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in stuff %}
+        <tr class="">
+            <td>{{row.name}}</td>
+            <td>{{row.home_wins}}</td>
+                <td>{{row.draws}}</td>
+                <td>{{row.away_wins}}</td>
+                <td>{{row.a_points}}</td>
+                <td>{{row.b_points}}</td>
+                <td>{{row.c_points}}</td>
+                <td>{{row.d_points}}</td>
+                <td>{{row.e_points}}</td>
+                <td>{{row.f_points}}</td>
+                <td>{{row.finals_points}}</td>
+                <td>{{row.total_points}}</td>
+
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</div>
+
+</div>
+{% endblock content %}

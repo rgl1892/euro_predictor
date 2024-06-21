@@ -15,6 +15,7 @@ urlpatterns = [
     path('winners',views.WinnersView.as_view(),name='winners'),
     path('stats/all',views.StatsView.as_view(),name='stats'),
     path('stats/heat_map',views.HeatView.as_view(),name='heat_map'),
+    path('stats/per_player',views.PerPlayerStats.as_view(),name='per_player'),
     path('account',views.AccountView.as_view(),name='account'),
     path('closed_predictions',views.ClosedPredictionView.as_view(),name='closed_predictions'),
     path('predictions/<int:id>',views.SeeUserPredictions.as_view(),name='predictions'),

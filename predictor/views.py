@@ -58,60 +58,73 @@ def check_user_points(request):
                     matches[0].save()
                     matches[1].save()
 
+def calculate_leaderboard():
+    users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
+    points = [int(sum([item.points for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
+    exact = [int(sum([item.exact for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
+    
+    leaderboard = []
+    for i in range(len(users)):
+        leaderboard.append([users[i],points[i],exact[i]])
+    
+    leaderboard = sorted(leaderboard,key=lambda x: (x[1],x[2]),reverse=True)
+    max_number = max([x[2] for x in leaderboard])
+    min_number = min([x[2] for x in leaderboard])
+    min_array = [x for x in leaderboard if x[2] == min_number][0]
+
+    for row in leaderboard:
+        if row[2] == max_number:
+            row.append(1)
+        elif row == min_array:
+            row.append(2)
+        else:
+            row.append(0)  
+    counter = 0
+    for x in range(len(leaderboard)):
+        
+
+        if x ==0:
+            leaderboard[x].append(1)
+        else:
+            if leaderboard[x][1] == leaderboard[x-1][1]:
+                leaderboard[x].append(leaderboard[x-1][4])
+                counter += 1
+            else:
+                leaderboard[x].append(leaderboard[x-1][4]+1+counter)
+                counter = 0
+
+    transposed = list(map(list, zip(*leaderboard)))
+    transposed_col = list(map(list, zip(*leaderboard)))[4]
+    count_col = []
+    count_val = Counter(transposed_col)
+    for x in transposed_col:
+        count_col.append(count_val[x])
+    transposed.append(count_col)
+    leaderboard = list(map(list, zip(*transposed)))
+
+    for x in range(len(leaderboard)):
+        if leaderboard[x][5] > 1:
+            leaderboard[x].append(f'{leaderboard[x][4]}=')
+        else:
+            leaderboard[x].append(f'{leaderboard[x][4]}')
+    return leaderboard
+
     
 class Home(View):
 
     template_name = 'predictor/home.html'
 
     def get(self, request):    
-        users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
-        points = [int(sum([item.points for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
-        exact = [int(sum([item.exact for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
-        
-        leaderboard = []
-        for i in range(len(users)):
-            leaderboard.append([users[i],points[i],exact[i]])
-        
-        leaderboard = sorted(leaderboard,key=lambda x: (x[1],x[2]),reverse=True)
-        max_number = max([x[2] for x in leaderboard])
-        min_number = min([x[2] for x in leaderboard])
-        min_array = [x for x in leaderboard if x[2] == min_number][0]
 
-        for row in leaderboard:
-            if row[2] == max_number:
-                row.append(1)
-            elif row == min_array:
-                row.append(2)
-            else:
-                row.append(0)  
-        counter = 0
-        for x in range(len(leaderboard)):
-            
-
-            if x ==0:
-                leaderboard[x].append(1)
-            else:
-                if leaderboard[x][1] == leaderboard[x-1][1]:
-                    leaderboard[x].append(leaderboard[x-1][4])
-                    counter += 1
-                else:
-                    leaderboard[x].append(leaderboard[x-1][4]+1+counter)
-                    counter = 0
-
-        transposed = list(map(list, zip(*leaderboard)))
-        transposed_col = list(map(list, zip(*leaderboard)))[4]
-        count_col = []
-        count_val = Counter(transposed_col)
-        for x in transposed_col:
-            count_col.append(count_val[x])
-        transposed.append(count_col)
-        leaderboard = list(map(list, zip(*transposed)))
-
-        for x in range(len(leaderboard)):
-            if leaderboard[x][5] > 1:
-                leaderboard[x].append(f'{leaderboard[x][4]}=')
-            else:
-                leaderboard[x].append(f'{leaderboard[x][4]}')
+        home = Prediction.objects.filter(user__username='devashusharma',
+                                        match_choice__match_number=51,
+                                        match_choice__home_away='Home')
+        home.update(score=3)
+        away = Prediction.objects.filter(user__username='devashusharma',
+                                        match_choice__match_number=51,
+                                        match_choice__home_away='Away')
+        away.update(score=1)
+        leaderboard = calculate_leaderboard()
 
         today_date = datetime.strftime(datetime.today(),"%Y-%m-%d")
         today_matches = Score.objects.filter(date__date=today_date)
@@ -779,4 +792,87 @@ class SeeUserPredictions(View):
         context = get_group_tables(request,user_name)
         context['user_name'] = user_name
 
+        return render(request,self.template_name,context)
+    
+class PerPlayerStats(View):
+    template_name = 'predictor/stats/per_player.html'
+    def get(self,request):
+
+        users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
+        groups = Group.objects.all()
+        matches = Match.objects.all()
+        scores = Prediction.objects.order_by('match_choice__match_number')
+        stuff = []
+        grouped = [[[score for score in scores.filter(match_choice__match_number=event,user=user)] for event in matches] for user in users]
+        for user_choice in grouped:
+            user_name = user_choice[0][0].user
+            home_wins = 0
+            away_wins = 0
+            draws = 0
+            a_points = 0
+            b_points = 0
+            c_points = 0
+            d_points = 0
+            e_points = 0
+            f_points = 0
+            finals_points = 0
+
+            for match in user_choice:
+
+                if match[0].score > match[1].score:
+                    home_wins += 1
+                elif match[0].score < match[1].score:
+                    away_wins += 1 
+                else:
+                    draws += 1
+                try:
+                    if match[0].match_choice.group.id == 1:
+                        try:
+                            a_points += match[0].points
+                        except:
+                            a_points = a_points
+                    elif match[0].match_choice.group.id == 2:
+                        try:
+                            b_points += match[0].points
+                        except:
+                            b_points = b_points
+                    elif match[0].match_choice.group.id == 3:
+                        try:
+                            c_points += match[0].points
+                        except:
+                            c_points = c_points
+                    elif match[0].match_choice.group.id == 4:
+                        try:
+                            d_points += match[0].points
+                        except:
+                            d_points = d_points
+                    elif match[0].match_choice.group.id == 5:
+                        try:
+                            e_points += match[0].points
+                        except:
+                            e_points = e_points
+                    elif match[0].match_choice.group.id == 6:
+                        try:
+                            f_points += match[0].points
+                        except:
+                            f_points = f_points
+                except:
+                    try:
+                        finals_points += match[0].points
+                    except:
+                        finals_points = finals_points
+
+                    
+                    
+            stuff.append({'name':user_name,'home_wins':home_wins,'away_wins':away_wins,'draws':draws,
+                          'a_points':a_points,'b_points':b_points,'c_points':c_points,'d_points':d_points,
+                          'e_points':e_points,'f_points':f_points,'finals_points':finals_points,
+                          'total_points':a_points+b_points+c_points+d_points+e_points+f_points+finals_points,
+                          'hhmm':home_wins+away_wins+draws
+                          })
+                    
+        
+        context = {
+            'stuff':stuff
+        }
         return render(request,self.template_name,context)
