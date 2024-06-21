@@ -29,7 +29,7 @@
     </thead>
     <tbody>
         {% for row in stuff %}
-        <tr class="">
+        <tr class={% if row.name == 'Total' %}"table-dark"{% endif %}>
             <td>{{row.name}}</td>
             <td>{{row.home_wins}}</td>
             <td>{{row.home_percent}}%</td>
