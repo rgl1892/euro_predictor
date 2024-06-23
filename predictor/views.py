@@ -63,8 +63,8 @@ def check_user_points(request):
 def calculate_leaderboard():
     users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
     points = [int(sum([item.points for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
-    right_results = [int(sum([item.points for item in Prediction.objects.filter(user=user) if item.points == 1])/2) for user in users]
-    right_gd = [int(sum([item.points for item in Prediction.objects.filter(user=user) if item.points == 2])/2) for user in users]
+    right_results = [int(len([item.points for item in Prediction.objects.filter(user=user) if item.points == 1])/2) for user in users]
+    right_gd = [int(len([item.points for item in Prediction.objects.filter(user=user) if item.points == 2])/2) for user in users]
     exact = [int(sum([item.exact for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
     
     leaderboard = []
