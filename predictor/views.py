@@ -7,6 +7,7 @@ from django.db import IntegrityError
 from collections import Counter
 from datetime import datetime
 import math
+from statistics import mean
 
 from .forms import EditAuthForm,EditUserForm,AccountForm
 from .models import Country,Group,Score,Prediction,Match,Winner
@@ -912,12 +913,69 @@ class PerPlayerStats(View):
 class PerMatchStats(View):
     template_name = 'predictor/stats/per_match.html'
 
+
     def get(self, request):
         matches = Match.objects.all()
+        users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
         scores = Prediction.objects.order_by('match_choice__match_number')
+        actual_matches = Prediction.objects.order_by('match_choice__match_number').filter(user__username='Actual_Scores')
 
-        grouped = [[score for score in scores.filter(match_choice__match_number=event)] for event in matches]
+        grouped = [[[score for score in scores.filter(match_choice__match_number=event,user=user)]for user in users] for event in matches]
+        dataset = []
+        for index, match in enumerate(grouped):
+            temp_total = []
+            temp_points = []
+            for user_pred in match:
+                if user_pred[0].score > user_pred[1].score:
+                    win = 1
+                    loss = 0
+                    draw = 0
+                elif user_pred[0].score < user_pred[1].score:
+                    win = 0
+                    loss = 1
+                    draw = 0
+                else:
+                    win = 0
+                    loss = 0
+                    draw = 1
+                if user_pred[0].points:
+                    points = user_pred[0].points
+                else:
+                    points = 0
+                datarow = [win,loss,draw,user_pred[0].score,user_pred[1].score,points]
+                temp_total.append(datarow)
+                if user_pred[0].points == 0:
+                    wrong = 1
+                    right = 0
+                    gd = 0
+                    exact = 0
+                elif user_pred[0].points == 1:
+                    wrong = 0
+                    right = 1
+                    gd = 0
+                    exact = 0
+                elif user_pred[0].points == 2:
+                    wrong = 0
+                    right = 0
+                    gd = 1
+                    exact = 0
+                elif user_pred[0].points == 4:
+                    wrong = 0
+                    right = 0
+                    gd = 0
+                    exact = 1
+                else:
+                    wrong = 0
+                    right = 0
+                    gd = 0
+                    exact = 0
+                temp_points.append([wrong,right,gd,exact])
+            points_row = [sum(col) for col in zip(*temp_points)]
+            avg = [round(float(sum(col))/len(col)*100) for col in zip(*temp_total)]
+            dataset.append([avg,[actual_matches[index*2],actual_matches[index*2+1]],points_row])
 
-        context = {}
+        context = {
+            'matches':dataset
+        }
 
         return render(request,self.template_name,context)
