@@ -63,11 +63,13 @@ def check_user_points(request):
 def calculate_leaderboard():
     users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
     points = [int(sum([item.points for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
+    right_results = [int(sum([item.points for item in Prediction.objects.filter(user=user) if item.points == 1])/2) for user in users]
+    right_gd = [int(sum([item.points for item in Prediction.objects.filter(user=user) if item.points == 2])/2) for user in users]
     exact = [int(sum([item.exact for item in Prediction.objects.filter(user=user) if item.points != None])/2) for user in users]
     
     leaderboard = []
     for i in range(len(users)):
-        leaderboard.append([users[i],points[i],exact[i]])
+        leaderboard.append([users[i],points[i],exact[i],right_results[i],right_gd[i]])
     
     leaderboard = sorted(leaderboard,key=lambda x: (x[1],x[2]),reverse=True)
     max_number = max([x[2] for x in leaderboard])
@@ -83,20 +85,20 @@ def calculate_leaderboard():
             row.append(0)  
     counter = 0
     for x in range(len(leaderboard)):
-        
-
         if x ==0:
             leaderboard[x].append(1)
         else:
             if leaderboard[x][1] == leaderboard[x-1][1]:
-                leaderboard[x].append(leaderboard[x-1][4])
+                leaderboard[x].append(leaderboard[x-1][6])
                 counter += 1
             else:
-                leaderboard[x].append(leaderboard[x-1][4]+1+counter)
+                leaderboard[x].append(leaderboard[x-1][6]+1+counter)
                 counter = 0
 
+
     transposed = list(map(list, zip(*leaderboard)))
-    transposed_col = list(map(list, zip(*leaderboard)))[4]
+    print(transposed)
+    transposed_col = list(map(list, zip(*leaderboard)))[6]
     count_col = []
     count_val = Counter(transposed_col)
     for x in transposed_col:
@@ -105,10 +107,10 @@ def calculate_leaderboard():
     leaderboard = list(map(list, zip(*transposed)))
 
     for x in range(len(leaderboard)):
-        if leaderboard[x][5] > 1:
-            leaderboard[x].append(f'{leaderboard[x][4]}=')
+        if leaderboard[x][7] > 1:
+            leaderboard[x].append(f'{leaderboard[x][6]}=')
         else:
-            leaderboard[x].append(f'{leaderboard[x][4]}')
+            leaderboard[x].append(f'{leaderboard[x][6]}')
     return leaderboard
 
     
