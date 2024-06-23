@@ -69,7 +69,7 @@ def calculate_leaderboard():
     
     leaderboard = []
     for i in range(len(users)):
-        leaderboard.append([users[i],points[i],exact[i],right_results[i],right_gd[i]])
+        leaderboard.append([users[i],points[i],exact[i],right_results[i],right_gd[i],exact[i]+right_results[i]+right_gd[i]])
     
     leaderboard = sorted(leaderboard,key=lambda x: (x[1],x[2]),reverse=True)
     max_number = max([x[2] for x in leaderboard])
@@ -89,16 +89,16 @@ def calculate_leaderboard():
             leaderboard[x].append(1)
         else:
             if leaderboard[x][1] == leaderboard[x-1][1]:
-                leaderboard[x].append(leaderboard[x-1][6])
+                leaderboard[x].append(leaderboard[x-1][7])
                 counter += 1
             else:
-                leaderboard[x].append(leaderboard[x-1][6]+1+counter)
+                leaderboard[x].append(leaderboard[x-1][7]+1+counter)
                 counter = 0
 
 
     transposed = list(map(list, zip(*leaderboard)))
-    print(transposed)
-    transposed_col = list(map(list, zip(*leaderboard)))[6]
+
+    transposed_col = list(map(list, zip(*leaderboard)))[7]
     count_col = []
     count_val = Counter(transposed_col)
     for x in transposed_col:
@@ -107,10 +107,10 @@ def calculate_leaderboard():
     leaderboard = list(map(list, zip(*transposed)))
 
     for x in range(len(leaderboard)):
-        if leaderboard[x][7] > 1:
-            leaderboard[x].append(f'{leaderboard[x][6]}=')
+        if leaderboard[x][8] > 1:
+            leaderboard[x].append(f'{leaderboard[x][7]}=')
         else:
-            leaderboard[x].append(f'{leaderboard[x][6]}')
+            leaderboard[x].append(f'{leaderboard[x][7]}')
     return leaderboard
 
     
@@ -263,7 +263,7 @@ class PredictionView(View):
         except:
             out = False
         if out == 'groups':
-            print('hi')
+
             for x in request.POST:
                 if x != 'csrfmiddlewaretoken' and x!= 'groups':
                     if request.POST[f'{x}'] != '':

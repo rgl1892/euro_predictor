@@ -33,7 +33,7 @@
             class="table-responsive"
         >
             <table
-                class="table table-primary"
+                class="table table-primary table-hover"
             >
                 <thead>
                     <tr>
@@ -44,6 +44,7 @@
                         <th scope="col">Right Results</th>
                         <th scope="col">Goal Diff</th>
                         <th scope="col">Exact Results</th>
+                        <th scope="col">Matches with points</th>
                         <th scope="col">Predictions</th>
                     </tr>
                 </thead>
@@ -51,7 +52,7 @@
                     {% for row in leaderboard %}
                     <tr  title={% if row.3 == 1 %}"The Octopus" {% elif row.3 == 2 %}"The Noctopus"{% endif %}"">
                         
-                        <td scope="row">{{row.8}}</td>
+                        <td scope="row">{{row.9}}</td>
                         <td scope="row">{{row.0}}</td>
                         <td>{{row.0.first_name}} {{row.0.last_name}}</td>
 
@@ -59,6 +60,7 @@
                         <td>{{row.3}}</td>
                         <td>{{row.4}}</td>
                         <td>{{row.2}}</td>
+                        <td>{{row.5}}</td>
 
                         <td><a href="{% url 'predictions'  id=row.0.id %}">Predictions</a></td>
                     </tr>
