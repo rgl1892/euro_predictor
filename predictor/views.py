@@ -908,3 +908,16 @@ class PerPlayerStats(View):
             'stuff':stuff
         }
         return render(request,self.template_name,context)
+    
+class PerMatchStats(View):
+    template_name = 'predictor/stats/per_match.html'
+
+    def get(self, request):
+        matches = Match.objects.all()
+        scores = Prediction.objects.order_by('match_choice__match_number')
+
+        grouped = [[score for score in scores.filter(match_choice__match_number=event)] for event in matches]
+
+        context = {}
+
+        return render(request,self.template_name,context)
