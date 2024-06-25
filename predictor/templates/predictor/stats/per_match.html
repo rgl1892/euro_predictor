@@ -1,6 +1,14 @@
 {% extends 'predictor/base.html' %}
 {% block content %}
 <div class="container">
+    <div class="row">
+        <div class="col">
+            <h3>Taxi Cab Distance</h3>
+            <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Definition</a>
+            <p>Shows average distance (total goals) we were as a group from the actual result.<br>
+            If it says 0 then as a group we got the result sopt on</p>
+        </div>
+    </div>
     <div
         class="table-responsive"
     >
@@ -18,6 +26,7 @@
                     <th scope="col">Right</th>
                     <th scope="col">Right Goal Diff</th>
                     <th scope="col">Exact</th>
+                    <th scope="col">Avg Taxi Diff</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,6 +41,7 @@
                     <td>{{match.2.1}}</td>
                     <td>{{match.2.2}}</td>
                     <td>{{match.2.3}}</td>
+                    <td>{{match.3}}</td>
 
                 </tr>
                 {% endfor %}

@@ -927,6 +927,7 @@ class PerMatchStats(View):
         for index, match in enumerate(grouped):
             temp_total = []
             temp_points = []
+            temp_taxi = []
             for user_pred in match:
                 if user_pred[0].score > user_pred[1].score:
                     win = 1
@@ -972,9 +973,19 @@ class PerMatchStats(View):
                     gd = 0
                     exact = 0
                 temp_points.append([wrong,right,gd,exact])
+                if Prediction.objects.filter(user__username='Actual_Scores',match_choice=user_pred[0].match_choice).get().score != None:
+                    x = abs(Prediction.objects.filter(user__username='Actual_Scores',match_choice=user_pred[0].match_choice).get().score - user_pred[0].score)
+                    y = abs(Prediction.objects.filter(user__username='Actual_Scores',match_choice=user_pred[1].match_choice).get().score - user_pred[1].score)
+                    taxi_diff = x+y
+                    temp_taxi.append(taxi_diff)
+
             points_row = [sum(col) for col in zip(*temp_points)]
             avg = [round(float(sum(col))/len(col)*100) for col in zip(*temp_total)]
-            dataset.append([avg,[actual_matches[index*2],actual_matches[index*2+1]],points_row])
+            try:
+                avg_taxi = round(sum(temp_taxi)/len(temp_taxi),2)
+            except:
+                avg_taxi = ''
+            dataset.append([avg,[actual_matches[index*2],actual_matches[index*2+1]],points_row,avg_taxi])
 
         context = {
             'matches':dataset
