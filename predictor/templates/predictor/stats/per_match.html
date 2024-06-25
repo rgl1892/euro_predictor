@@ -19,6 +19,7 @@
                 <tr>
                     <th scope="col">Match</th>
                     <th scope="col">Actual Score</th>
+                    <th scope="col">Our xG</th>
                     <th scope="col">Home Win</th>
                     <th scope="col">Away Win</th>
                     <th scope="col">Draw</th>
@@ -27,6 +28,7 @@
                     <th scope="col">Right Goal Diff</th>
                     <th scope="col">Exact</th>
                     <th scope="col">Avg Taxi Diff</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -34,6 +36,7 @@
                 <tr class="">
                     <td scope="row">{{match.1.0.country}} vs {{match.1.1.country}}</td>
                     <td scope="row">{{match.1.0.score}} - {{match.1.1.score}}</td>
+                    <td>{{match.4.0}} - {{match.4.1}} </td>
                     <td>{{match.0.0}}%</td>
                     <td>{{match.0.1}}%</td>
                     <td>{{match.0.2}}%</td>
@@ -42,6 +45,7 @@
                     <td>{{match.2.2}}</td>
                     <td>{{match.2.3}}</td>
                     <td>{{match.3}}</td>
+                    
 
                 </tr>
                 {% endfor %}

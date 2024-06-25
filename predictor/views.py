@@ -928,6 +928,7 @@ class PerMatchStats(View):
             temp_total = []
             temp_points = []
             temp_taxi = []
+            temp_score = []
             for user_pred in match:
                 if user_pred[0].score > user_pred[1].score:
                     win = 1
@@ -978,14 +979,16 @@ class PerMatchStats(View):
                     y = abs(Prediction.objects.filter(user__username='Actual_Scores',match_choice=user_pred[1].match_choice).get().score - user_pred[1].score)
                     taxi_diff = x+y
                     temp_taxi.append(taxi_diff)
+                temp_score.append([user_pred[0].score,user_pred[1].score])
 
             points_row = [sum(col) for col in zip(*temp_points)]
             avg = [round(float(sum(col))/len(col)*100) for col in zip(*temp_total)]
+            avg_score = [round(float(sum(col))/len(col),2) for col in zip(*temp_score)]
             try:
                 avg_taxi = round(sum(temp_taxi)/len(temp_taxi),2)
             except:
                 avg_taxi = ''
-            dataset.append([avg,[actual_matches[index*2],actual_matches[index*2+1]],points_row,avg_taxi])
+            dataset.append([avg,[actual_matches[index*2],actual_matches[index*2+1]],points_row,avg_taxi,avg_score])
 
         context = {
             'matches':dataset
