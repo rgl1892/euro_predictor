@@ -124,12 +124,18 @@ class Home(View):
         today_date = datetime.strftime(datetime.today(),"%Y-%m-%d")
         today_matches = Score.objects.filter(date__date=today_date)
         today_matches = [today_matches[i:i+2] for i in range(0,len(today_matches),2)]
-    
-        
+
+        if request.user.is_authenticated:
+            today = []
+            today_scores = [[Prediction.objects.filter(match_choice=game,user__username=request.user).get() for game in match] for match in today_matches]
+            for x ,y in zip(today_matches,today_scores):
+                today.append([x,y])
+        else:
+            today= today_matches
 
         context = {
             'leaderboard':leaderboard,
-            'today_matches':today_matches
+            'today_matches':today,
         }
         return render(request, self.template_name,context)
 
