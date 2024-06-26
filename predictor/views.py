@@ -279,6 +279,7 @@ class PredictionView(View):
             context = get_group_tables(request,request.user)
             pred = Prediction.objects.filter(user=request.user).exclude(score__isnull=True).exclude(match_choice__group__letter__isnull=True)
             third_groups = sorted(context['third_groups'])
+            print(third_groups)
             options = {
             "['A', 'B', 'C', 'D']":[1,4,2,3],
             "['A', 'B', 'C', 'E']":[1,5,2,3],
@@ -311,11 +312,11 @@ class PredictionView(View):
                 Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Home').update(country=context['stuff'][2][0]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Away').update(country=context['stuff'][third_teams[1]-1][2]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Home').update(country=context['stuff'][5][0]['country'])
-                Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Away').update(country=context['stuff'][third_teams[2]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Away').update(country=context['stuff'][third_teams[3]-1][2]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Home').update(country=context['stuff'][3][1]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Away').update(country=context['stuff'][4][1]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Home').update(country=context['stuff'][4][0]['country'])
-                Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Away').update(country=context['stuff'][third_teams[3]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Away').update(country=context['stuff'][third_teams[2]-1][2]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Home').update(country=context['stuff'][3][0]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Away').update(country=context['stuff'][5][1]['country'])
 
@@ -541,6 +542,7 @@ class ActualView(View):
             }
             
             third_teams = options[f'{third_groups}']
+            print(third_teams)
             
 
             
@@ -554,11 +556,11 @@ class ActualView(View):
                 Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Home').update(country=context['stuff'][2][0]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=40,match_choice__home_away='Away').update(country=context['stuff'][third_teams[1]-1][2]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Home').update(country=context['stuff'][5][0]['country'])
-                Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Away').update(country=context['stuff'][third_teams[2]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=41,match_choice__home_away='Away').update(country=context['stuff'][third_teams[3]-1][2]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Home').update(country=context['stuff'][3][1]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=42,match_choice__home_away='Away').update(country=context['stuff'][4][1]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Home').update(country=context['stuff'][4][0]['country'])
-                Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Away').update(country=context['stuff'][third_teams[3]-1][2]['country'])
+                Prediction.objects.filter(user=request.user,match_choice__match_number=43,match_choice__home_away='Away').update(country=context['stuff'][third_teams[2]-1][2]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Home').update(country=context['stuff'][3][0]['country'])
                 Prediction.objects.filter(user=request.user,match_choice__match_number=44,match_choice__home_away='Away').update(country=context['stuff'][5][1]['country'])
 
