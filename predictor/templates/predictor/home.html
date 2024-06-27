@@ -27,7 +27,7 @@
             {% endif %}
             {% for match in today_matches %}
             {% if user.is_authenticated %}
-            <h4>{{match.0.0.country.name  }} vs {{match.0.1.country.name}} : {{match.0.0.date|timezone:"Europe/London"|date:"H:s e"}} | {{match.1.0.country}} : {{match.1.0.score}} - {{match.1.1.score}} : {{match.1.1.country}}</h4>
+            <h4>{{match.0.0.date|timezone:"Europe/London"|date:"H:s e"}}<br>{{match.0.0.country.name  }} vs {{match.0.1.country.name}} <br> {{match.1.0.country}} : {{match.1.0.score}} - {{match.1.1.score}} : {{match.1.1.country}}</h4>
             {% else %}
             <h4>{{match.0.country.name  }} vs {{match.1.country.name}} : {{match.0.date|timezone:"Europe/London"|date:"H:s e"}}</h4>
             {% endif %}

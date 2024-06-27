@@ -114,19 +114,29 @@ def calculate_leaderboard():
             leaderboard[x].append(f'{leaderboard[x][7]}')
     return leaderboard
 
+def update_score_table():
+    actuals_home = Prediction.objects.filter(user__username='Actual_Scores',match_choice__home_away='Home',match_choice__stage='Finals')
+    actuals_away = Prediction.objects.filter(user__username='Actual_Scores',match_choice__home_away='Away',match_choice__stage='Finals')
+    [Score.objects.filter(home_away='Home',match_number=item.match_choice.match_number).update(country=Country.objects.filter(name=item.country).get().id) for item in actuals_home if item.country != 'None']
+    [Score.objects.filter(home_away='Away',match_number=item.match_choice.match_number).update(country=Country.objects.filter(name=item.country).get().id) for item in actuals_away if item.country != 'None']
+
+
+
     
 class Home(View):
 
     template_name = 'predictor/home.html'
 
     def get(self, request):    
+        update_score_table()
         leaderboard = calculate_leaderboard()
 
-        today_date = datetime.strftime(datetime.today()+timedelta(days=3),"%Y-%m-%d")
+        today_date = datetime.strftime(datetime.today(),"%Y-%m-%d")
         today_matches = Score.objects.filter(date__date=today_date)
         today_matches = [today_matches[i:i+2] for i in range(0,len(today_matches),2)]
+        print(today_matches)
 
-        if request.user.is_authenticated:
+        if request.user.is_authenticated and str(request.user) != 'richardlongdon':
             today = []
             today_scores = [[Prediction.objects.filter(match_choice=game,user__username=request.user).get() for game in match] for match in today_matches]
             for x ,y in zip(today_matches,today_scores):
