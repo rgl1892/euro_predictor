@@ -6,6 +6,7 @@ from django.db import IntegrityError
 
 from collections import Counter
 from datetime import datetime
+from datetime import timedelta
 import math
 from statistics import mean
 
@@ -121,7 +122,7 @@ class Home(View):
     def get(self, request):    
         leaderboard = calculate_leaderboard()
 
-        today_date = datetime.strftime(datetime.today(),"%Y-%m-%d")
+        today_date = datetime.strftime(datetime.today()+timedelta(days=3),"%Y-%m-%d")
         today_matches = Score.objects.filter(date__date=today_date)
         today_matches = [today_matches[i:i+2] for i in range(0,len(today_matches),2)]
 
