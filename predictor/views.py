@@ -134,7 +134,7 @@ class Home(View):
         today_date = datetime.strftime(datetime.today(),"%Y-%m-%d")
         today_matches = Score.objects.filter(date__date=today_date)
         today_matches = [today_matches[i:i+2] for i in range(0,len(today_matches),2)]
-        print(today_matches)
+
 
         if request.user.is_authenticated and str(request.user) != 'richardlongdon':
             today = []
@@ -593,6 +593,8 @@ class ActualView(View):
             last_16_range = range(37,45)
             
             get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=x) for x in last_16_range]
+
+            get_winners = [x for x in get_winners if str(x[0].score) != 'None']
             winners = []
             for match_played in get_winners:
                 if match_played[0].penalties:
@@ -610,15 +612,38 @@ class ActualView(View):
                         winners.append(match_played[0].country) 
                     else:
                         winners.append(match_played[1].country)
-
-            Prediction.objects.filter(user=request.user,match_choice__match_number=45,match_choice__home_away='Home').update(country=winners[2])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=45,match_choice__home_away='Away').update(country=winners[0])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=46,match_choice__home_away='Home').update(country=winners[4])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=46,match_choice__home_away='Away').update(country=winners[5])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=47,match_choice__home_away='Home').update(country=winners[6])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=47,match_choice__home_away='Away').update(country=winners[7])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=48,match_choice__home_away='Home').update(country=winners[3])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=48,match_choice__home_away='Away').update(country=winners[1])
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=45,match_choice__home_away='Home').update(country=winners[2])
+            except:
+                None
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=45,match_choice__home_away='Away').update(country=winners[0])
+            except:
+                None
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=46,match_choice__home_away='Home').update(country=winners[4])
+            except:
+                None
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=46,match_choice__home_away='Away').update(country=winners[5])
+            except:
+                None
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=47,match_choice__home_away='Home').update(country=winners[6])
+            except:
+                None
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=47,match_choice__home_away='Away').update(country=winners[7])
+            except:
+                None
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=48,match_choice__home_away='Home').update(country=winners[3])
+            except:
+                None
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=48,match_choice__home_away='Away').update(country=winners[1])
+            except:
+                None
 
         if list(request.POST.keys())[-1] == 'quarters':
             ids = []
@@ -638,6 +663,7 @@ class ActualView(View):
             range_to_use = range(45,49)
             
             get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=x) for x in range_to_use]
+            get_winners = [x for x in get_winners if str(x[0].score) != 'None']
             winners = []
             for match_played in get_winners:
                 if match_played[0].penalties:
@@ -655,10 +681,22 @@ class ActualView(View):
                         winners.append(match_played[0].country) 
                     else:
                         winners.append(match_played[1].country)
-            Prediction.objects.filter(user=request.user,match_choice__match_number=49,match_choice__home_away='Home').update(country=winners[0])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=49,match_choice__home_away='Away').update(country=winners[1])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=50,match_choice__home_away='Home').update(country=winners[2])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=50,match_choice__home_away='Away').update(country=winners[3])
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=49,match_choice__home_away='Home').update(country=winners[0])
+            except:
+                None
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=49,match_choice__home_away='Away').update(country=winners[1])
+            except:
+                None
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=50,match_choice__home_away='Home').update(country=winners[2])
+            except:
+                None
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=50,match_choice__home_away='Away').update(country=winners[3])
+            except:
+                None
         
         if list(request.POST.keys())[-1] == 'semis':
             ids = []
@@ -678,6 +716,7 @@ class ActualView(View):
             range_to_use = range(49,51)
             
             get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=x) for x in range_to_use]
+            get_winners = [x for x in get_winners if str(x[0].score) != 'None']
             winners = []
             for match_played in get_winners:
                 if match_played[0].penalties:
@@ -695,8 +734,14 @@ class ActualView(View):
                         winners.append(match_played[0].country) 
                     else:
                         winners.append(match_played[1].country)
-            Prediction.objects.filter(user=request.user,match_choice__match_number=51,match_choice__home_away='Home').update(country=winners[0])
-            Prediction.objects.filter(user=request.user,match_choice__match_number=51,match_choice__home_away='Away').update(country=winners[1])
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=51,match_choice__home_away='Home').update(country=winners[0])
+            except:
+                None
+            try:
+                Prediction.objects.filter(user=request.user,match_choice__match_number=51,match_choice__home_away='Away').update(country=winners[1])
+            except:
+                None
 
 
         if list(request.POST.keys())[-1] == 'final':
@@ -717,6 +762,7 @@ class ActualView(View):
             
             
             get_winners = [Prediction.objects.filter(user=request.user,match_choice__match_number=51)]
+            get_winners = [x for x in get_winners if str(x[0].score) != 'None']
             winners = []
             for match_played in get_winners:
                 if match_played[0].penalties:
