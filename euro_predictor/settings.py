@@ -158,7 +158,7 @@ def get_cache():
           'behaviors': {
             # Enable faster IO
             'no_block': True,
-            'tcp_nodelay': True,
+            'tcp_nodelay': False,
             # Keep connection alive
             'tcp_keepalive': True,
             # Timeout settings
