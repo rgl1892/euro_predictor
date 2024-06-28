@@ -994,11 +994,9 @@ class PerMatchStats(View):
         scores = Prediction.objects.order_by('match_choice__match_number').all()
 
         actual_matches = Prediction.objects.order_by('match_choice__match_number').filter(user__username='Actual_Scores').all()
-        grouped = cache.get(PREDICTION_KEY)
-        if not grouped:
-            grouped = [[[score for score in scores.filter(match_choice__match_number=event,user=user)]for user in users] for event in matches]
-            cache.set(PREDICTION_KEY,grouped)
-            print(PREDICTION_KEY)
+        
+        grouped = [[[score for score in scores.filter(match_choice__match_number=event,user=user)]for user in users] for event in matches]
+            
         dataset = []
         for index, match in enumerate(grouped):
             temp_total = []
