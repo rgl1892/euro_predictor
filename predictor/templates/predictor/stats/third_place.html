@@ -1,0 +1,87 @@
+{% extends 'predictor/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Third Place Teams</h2>
+            <div
+                class="table-responsive"
+            >
+                <table
+                    class="table table-primary"
+                >
+                    <thead>
+                        <tr>
+                            <th scope="col">Country</th>
+                            <th scope="col">Group</th>
+                            <th scope="col">Pts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in actual_third.0 %}
+                        <tr class="">
+                            <td scope="row">{{row.country}}</td>
+                            <td>{{row.group}}</td>
+                            <td>{{row.points}}</td>
+
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                </table>
+            </div>
+            
+            {% for user in third_teams %}
+            <div
+                class="table-responsive"
+            >
+            <h4>{{user.1}}</h4>
+                <table
+                    class="table table-primary"
+                >
+                    <thead>
+                        <tr>
+                            <th scope="col">Country</th>
+                            <th scope="col">Pts</th>
+                            <th scope="col">Group</th>
+                            <th scope="col">In actual last 16</th>
+                            <th scope="col">Playing match you predicted?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in user.0 %}
+                        <tr class="">
+                            <td scope="row">{{row.country}}</td>
+                            <td>{{row.points}}</td>
+                            <td>{{row.group}}</td>
+                            <td>R1C3</td>
+                            <td>R1C3</td>
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                </table>
+            </div>
+            
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% for user in third_teams %}
+
+
+{% for item  in user.0 %}
+
+{{item}}
+
+{% endfor %}
+
+{% endfor %}
+
+
+{% endblock content %}

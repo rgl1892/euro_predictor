@@ -1060,3 +1060,70 @@ class PerMatchStats(View):
         }
 
         return render(request,self.template_name,context)
+    
+class ThirdPlaceStats(View):
+
+    template_name = 'predictor/stats/third_place.html'
+
+    def get_user_third_teams(self,user_name,matches,groups):
+        scores = Prediction.objects.filter(user__username=user_name).order_by('match_choice__match_number')
+        grouped = [[[score for score in scores.filter(match_choice__match_number=event)] for event in matches.filter(score__group=group)][::2] for group in groups]
+        country = {}
+        for group in grouped:
+            for event in group:
+                country[f'{event[0].match_choice.country.name}'] =  {'country':event[0].match_choice.country.name,'wins':0,'losses':0, 'draws':0, 'goals_for':0,'goals_against':0,'group':event[0].match_choice.group.letter,'fifa':event[0].match_choice.country.fifa_points}
+        for group in grouped:
+            for event in group:
+                try:
+                    if event[0].score > event[1].score:
+                        country[f'{event[0].match_choice.country.name}']['wins'] += 1
+                        country[f'{event[1].match_choice.country.name}']['losses'] += 1
+                    elif event[0].score < event[1].score:
+                        country[f'{event[1].match_choice.country.name}']['wins'] += 1
+                        country[f'{event[0].match_choice.country.name}']['losses'] += 1
+                    else:
+                        country[f'{event[0].match_choice.country.name}']['draws'] += 1
+                        country[f'{event[1].match_choice.country.name}']['draws'] += 1
+                    country[f'{event[0].match_choice.country.name}']['goals_for'] += event[0].score
+                    country[f'{event[1].match_choice.country.name}']['goals_for'] += event[1].score
+                    country[f'{event[0].match_choice.country.name}']['goals_against'] += event[1].score
+                    country[f'{event[1].match_choice.country.name}']['goals_against'] += event[0].score
+                except:
+                    continue
+        for item in country:
+            country[item]['points'] = country[item]['wins'] * 3 + country[item]['draws']
+            country[item]['ranking'] = country[item]['points'] + (country[item]['goals_for'] - country[item]['goals_against'])*0.01 + (country[item]['goals_for'])*0.0001 + float(country[item]['fifa'])* 0.000000001
+        group_letters = ['A','B','C','D','E','F']
+        grouped_tour = []
+        for group in group_letters:
+            group_team = []
+            for row in country:
+                if country[row]['group'] == group:
+                    group_team.append(country[row])
+            grouped_tour.append(group_team)
+
+        stuff = [sorted(row,key = lambda x: x['ranking'],reverse=True) for row in grouped_tour]
+        third_teams = [row[2] for row in stuff]
+
+        
+        best_thirds = sorted(third_teams ,key= lambda x: x['ranking'],reverse=True)
+        return(best_thirds)
+    
+    def get(self,request):
+        groups = Group.objects.all()
+        matches = Match.objects.all()
+        users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
+        user_list = [item.username for item in users]
+        print(user_list)
+        third_teams = [[self.get_user_third_teams(item,matches,groups),item] for item in user_list]
+        actual_third = [self.get_user_third_teams('Actual_Scores',matches,groups),'Actual_Scores']
+        
+        
+        
+
+
+        context = {
+            'third_teams':third_teams,
+            'actual_third':actual_third,
+            }
+        return render(request,self.template_name,context)
