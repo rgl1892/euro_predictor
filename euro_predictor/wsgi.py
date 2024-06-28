@@ -12,5 +12,8 @@ import os
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'euro_predictor.settings')
+os.environ['MEMCACHIER_USERNAME'] = 'C03897'
+os.environ['MEMCACHIER_PASSWORD'] = '384CACB51DE2BC52B204D9F70BF57BBE'
+os.environ['MEMCACHIER_SERVERS'] = 'mc3.c1.eu-central-1.ec2.memcachier.com:11211'
 
 application = get_wsgi_application()
