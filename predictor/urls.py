@@ -18,6 +18,7 @@ urlpatterns = [
     path('stats/per_player',views.PerPlayerStats.as_view(),name='per_player'),
     path('stats/per_match',views.PerMatchStats.as_view(),name='per_match'),
     path('stats/third_place',views.ThirdPlaceStats.as_view(),name='third_place'),
+    # path('stats/third_place',views.TestStats.as_view(),name='third_place'),
     path('account',views.AccountView.as_view(),name='account'),
     path('closed_predictions',views.ClosedPredictionView.as_view(),name='closed_predictions'),
     path('predictions/<int:id>',views.SeeUserPredictions.as_view(),name='predictions'),
