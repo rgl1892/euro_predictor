@@ -130,13 +130,68 @@ class Home(View):
 
     template_name = 'predictor/home.html'
 
-    def get(self, request):    
+    def get(self, request):  
+
+        location = [
+            "Olympiastadion",
+            'BVB Stadion Dortmund',
+            'Arena AufSchalke',
+            "Stadion Köln",
+            "Düsseldorf Arena",
+            "Frankfurt Stadion",
+            "Fußball Arena München",
+            "Fußball Arena München",
+            "Arena Stuttgart",
+            "Volksparkstadion"]
+        scores = Score.objects.filter(match_number=37)
+        for score in scores:
+            score.location = location[0]
+            score.date = datetime(2024,6,29,19)
+            score.save()
+        scores = Score.objects.filter(match_number=38)
+        for score in scores:
+            score.location = location[1]
+            score.date = datetime(2024,6,29,16)
+            score.save()
+        scores = Score.objects.filter(match_number=39)
+        for score in scores:
+            score.location = location[3]
+            score.date = datetime(2024,6,30,19)
+            score.save()
+        scores = Score.objects.filter(match_number=40)
+        for score in scores:
+            score.location = location[2]
+            score.date = datetime(2024,6,30,16)
+            score.save()
+        scores = Score.objects.filter(match_number=41)
+        for score in scores:
+            score.location = location[5]
+            score.date = datetime(2024,7,1,19)
+            score.save()
+        scores = Score.objects.filter(match_number=42)
+        for score in scores:
+            score.location = location[4]
+            score.date = datetime(2024,7,1,16)
+            score.save()
+        scores = Score.objects.filter(match_number=43)
+        for score in scores:
+            score.location = location[6]
+            score.date = datetime(2024,7,2,19)
+            score.save()
+        scores = Score.objects.filter(match_number=44)
+        for score in scores:
+            score.location = location[7]
+            score.date = datetime(2024,7,2,16)
+            score.save()
+
         update_score_table()
         leaderboard = calculate_leaderboard()
 
         today_date = datetime.strftime(datetime.today(),"%Y-%m-%d")
         today_matches = Score.objects.filter(date__date=today_date)
         today_matches = [today_matches[i:i+2] for i in range(0,len(today_matches),2)]
+
+
 
 
         if request.user.is_authenticated and str(request.user) != 'richardlongdon':
@@ -151,6 +206,8 @@ class Home(View):
             'leaderboard':leaderboard,
             'today_matches':today,
         }
+
+
         return render(request, self.template_name,context)
 
 class WorldRankings(View):
