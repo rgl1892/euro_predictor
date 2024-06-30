@@ -188,7 +188,7 @@ class Home(View):
         leaderboard = calculate_leaderboard()
 
         today_date = datetime.strftime(datetime.today(),"%Y-%m-%d")
-        today_matches = Score.objects.filter(date__date=today_date)
+        today_matches = Score.objects.filter(date__date=today_date).order_by('date')
         today_matches = [today_matches[i:i+2] for i in range(0,len(today_matches),2)]
 
 
