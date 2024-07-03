@@ -925,6 +925,131 @@ class PerPlayerStats(View):
     template_name = 'predictor/stats/per_player.html'
     def get(self,request):
 
+        users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon').values()
+        groups = Group.objects.values()
+        matches = Match.objects.values()
+        scores = Prediction.objects.order_by('match_choice__match_number').values('country','match_choice__match_number','match_choice__group','score','user_id','points','exact','actual','user__username')
+        stuff = []
+        grouped = [[[score for score in scores if score['user_id'] == user['id'] and score['match_choice__match_number'] == event['match_number']] for event in matches] for user in users]
+        
+        
+        for user_choice in grouped:
+            user_name = user_choice[0][0]['user__username']
+            home_wins = 0
+            away_wins = 0
+            draws = 0
+            a_points = 0
+            b_points = 0
+            c_points = 0
+            d_points = 0
+            e_points = 0
+            f_points = 0
+            finals_points = 0
+
+            for match in user_choice:
+
+                if match[0]['score'] > match[1]['score']:
+                    home_wins += 1
+                elif match[0]['score'] < match[1]['score']:
+                    away_wins += 1 
+                else:
+                    draws += 1
+                try:
+                    if match[0]['match_choice__group'] == 1:
+                        try:
+                            a_points += match[0]['points']
+                        except:
+                            a_points = a_points
+                    elif match[0]['match_choice__group'] == 2:
+                        try:
+                            b_points += match[0]['points']
+                        except:
+                            b_points = b_points
+                    elif match[0]['match_choice__group'] == 3:
+                        try:
+                            c_points += match[0]['points']
+                        except:
+                            c_points = c_points
+                    elif match[0]['match_choice__group'] == 4:
+                        try:
+                            d_points += match[0]['points']
+                        except:
+                            d_points = d_points
+                    elif match[0]['match_choice__group'] == 5:
+                        try:
+                            e_points += match[0]['points']
+                        except:
+                            e_points = e_points
+                    elif match[0]['match_choice__group'] == 6:
+                        try:
+                            f_points += match[0]['points']
+                        except:
+                            f_points = f_points
+                except:
+                    try:
+                        finals_points += match[0]['points']
+                    except:
+                        finals_points = finals_points
+
+                    
+                    
+            stuff.append({
+                'name':user_name,'home_wins':home_wins,'away_wins':away_wins,'draws':draws,
+                'a_points':a_points,'b_points':b_points,'c_points':c_points,'d_points':d_points,
+                'e_points':e_points,'f_points':f_points,'finals_points':finals_points,
+                'total_points':a_points+b_points+c_points+d_points+e_points+f_points+finals_points,
+                'draw_percent':math.ceil((draws/(home_wins+away_wins+draws))*100),
+                'home_percent':round((home_wins/(home_wins+away_wins+draws))*100),
+                'away_percent':round((away_wins/(home_wins+away_wins+draws))*100),
+                          })
+        total_h_wins = 0
+        total_draw = 0
+        total_a_wins = 0
+        total_a = 0
+        total_b = 0
+        total_c = 0
+        total_d = 0
+        total_e = 0
+        total_f = 0
+        total_fin = 0
+        people = len(stuff)
+        for row in stuff:
+            total_h_wins += row['home_wins']
+            total_draw += row['draws']
+            total_a_wins += row['away_wins']
+            total_a += row['a_points']
+            total_b += row['b_points']
+            total_c += row['c_points']
+            total_d += row['d_points']
+            total_e += row['e_points']
+            total_f += row['f_points']
+            total_fin += row['finals_points']
+        stuff.append({'name':'Total','home_wins':total_h_wins,'away_wins':total_a_wins,'draws':total_draw,
+                'a_points':total_a,'b_points':total_b,'c_points':total_c,'d_points':total_d,
+                'e_points':total_e,'f_points':total_f,'finals_points':total_fin,
+                'total_points':total_a+total_b+total_c+total_d+total_e+total_f+total_fin,
+                'draw_percent':math.ceil((total_draw/(total_h_wins+total_a_wins+draws))*100),
+                'home_percent':round((total_h_wins/(total_h_wins+total_a_wins+total_draw))*100),
+                'away_percent':round((total_a_wins/(total_h_wins+total_a_wins+total_draw))*100),})
+        
+        stuff.append({'name':'Average','home_wins':round(total_h_wins/people,1),'away_wins':round(total_a_wins/people,1),'draws':round(total_draw/people,1),
+                'a_points':round(total_a/people,1),'b_points':round(total_b/people,1),'c_points':round(total_c/people,1),'d_points':round(total_d/people,1),
+                'e_points':round(total_e/people,1),'f_points':round(total_f/people,1),'finals_points':round(total_fin/people,1),
+                'total_points':round((total_a+total_b+total_c+total_d+total_e+total_f+total_fin)/people,1),
+                'draw_percent':math.ceil((total_draw/(total_h_wins+total_a_wins+draws))*100),
+                'home_percent':round((total_h_wins/(total_h_wins+total_a_wins+total_draw))*100),
+                'away_percent':round((total_a_wins/(total_h_wins+total_a_wins+total_draw))*100),})
+
+        
+        context = {
+            'stuff':stuff
+        }
+        return render(request,self.template_name,context)
+    
+class PerPlayerStats2(View):
+    template_name = 'predictor/stats/per_player.html'
+    def get(self,request):
+
         users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
         groups = Group.objects.all()
         matches = Match.objects.all()
@@ -946,9 +1071,9 @@ class PerPlayerStats(View):
 
             for match in user_choice:
 
-                if match[0].score > match[1].score:
+                if match[0]['score'] > match[1]['score']:
                     home_wins += 1
-                elif match[0].score < match[1].score:
+                elif match[0]['score'] < match[1]['score']:
                     away_wins += 1 
                 else:
                     draws += 1
