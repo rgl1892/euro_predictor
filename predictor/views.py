@@ -1047,128 +1047,6 @@ class PerPlayerStats(View):
         }
         return render(request,self.template_name,context)
     
-class PerPlayerStats2(View):
-    template_name = 'predictor/stats/per_player.html'
-    def get(self,request):
-
-        users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
-        groups = Group.objects.all()
-        matches = Match.objects.all()
-        scores = Prediction.objects.order_by('match_choice__match_number').values()
-        stuff = []
-        grouped = [[[score for score in scores if score['user_id'] == user and score['match_choice_id'] == event]for user in users] for event in matches]
-        for user_choice in grouped:
-            user_name = user_choice[0][0].user
-            home_wins = 0
-            away_wins = 0
-            draws = 0
-            a_points = 0
-            b_points = 0
-            c_points = 0
-            d_points = 0
-            e_points = 0
-            f_points = 0
-            finals_points = 0
-
-            for match in user_choice:
-
-                if match[0]['score'] > match[1]['score']:
-                    home_wins += 1
-                elif match[0]['score'] < match[1]['score']:
-                    away_wins += 1 
-                else:
-                    draws += 1
-                try:
-                    if match[0].match_choice.group.id == 1:
-                        try:
-                            a_points += match[0].points
-                        except:
-                            a_points = a_points
-                    elif match[0].match_choice.group.id == 2:
-                        try:
-                            b_points += match[0].points
-                        except:
-                            b_points = b_points
-                    elif match[0].match_choice.group.id == 3:
-                        try:
-                            c_points += match[0].points
-                        except:
-                            c_points = c_points
-                    elif match[0].match_choice.group.id == 4:
-                        try:
-                            d_points += match[0].points
-                        except:
-                            d_points = d_points
-                    elif match[0].match_choice.group.id == 5:
-                        try:
-                            e_points += match[0].points
-                        except:
-                            e_points = e_points
-                    elif match[0].match_choice.group.id == 6:
-                        try:
-                            f_points += match[0].points
-                        except:
-                            f_points = f_points
-                except:
-                    try:
-                        finals_points += match[0].points
-                    except:
-                        finals_points = finals_points
-
-                    
-                    
-            stuff.append({
-                'name':user_name,'home_wins':home_wins,'away_wins':away_wins,'draws':draws,
-                'a_points':a_points,'b_points':b_points,'c_points':c_points,'d_points':d_points,
-                'e_points':e_points,'f_points':f_points,'finals_points':finals_points,
-                'total_points':a_points+b_points+c_points+d_points+e_points+f_points+finals_points,
-                'draw_percent':math.ceil((draws/(home_wins+away_wins+draws))*100),
-                'home_percent':round((home_wins/(home_wins+away_wins+draws))*100),
-                'away_percent':round((away_wins/(home_wins+away_wins+draws))*100),
-                          })
-        total_h_wins = 0
-        total_draw = 0
-        total_a_wins = 0
-        total_a = 0
-        total_b = 0
-        total_c = 0
-        total_d = 0
-        total_e = 0
-        total_f = 0
-        total_fin = 0
-        people = len(stuff)
-        for row in stuff:
-            total_h_wins += row['home_wins']
-            total_draw += row['draws']
-            total_a_wins += row['away_wins']
-            total_a += row['a_points']
-            total_b += row['b_points']
-            total_c += row['c_points']
-            total_d += row['d_points']
-            total_e += row['e_points']
-            total_f += row['f_points']
-            total_fin += row['finals_points']
-        stuff.append({'name':'Total','home_wins':total_h_wins,'away_wins':total_a_wins,'draws':total_draw,
-                'a_points':total_a,'b_points':total_b,'c_points':total_c,'d_points':total_d,
-                'e_points':total_e,'f_points':total_f,'finals_points':total_fin,
-                'total_points':total_a+total_b+total_c+total_d+total_e+total_f+total_fin,
-                'draw_percent':math.ceil((total_draw/(total_h_wins+total_a_wins+draws))*100),
-                'home_percent':round((total_h_wins/(total_h_wins+total_a_wins+total_draw))*100),
-                'away_percent':round((total_a_wins/(total_h_wins+total_a_wins+total_draw))*100),})
-        
-        stuff.append({'name':'Average','home_wins':round(total_h_wins/people,1),'away_wins':round(total_a_wins/people,1),'draws':round(total_draw/people,1),
-                'a_points':round(total_a/people,1),'b_points':round(total_b/people,1),'c_points':round(total_c/people,1),'d_points':round(total_d/people,1),
-                'e_points':round(total_e/people,1),'f_points':round(total_f/people,1),'finals_points':round(total_fin/people,1),
-                'total_points':round((total_a+total_b+total_c+total_d+total_e+total_f+total_fin)/people,1),
-                'draw_percent':math.ceil((total_draw/(total_h_wins+total_a_wins+draws))*100),
-                'home_percent':round((total_h_wins/(total_h_wins+total_a_wins+total_draw))*100),
-                'away_percent':round((total_a_wins/(total_h_wins+total_a_wins+total_draw))*100),})
-
-        
-        context = {
-            'stuff':stuff
-        }
-        return render(request,self.template_name,context)
     
 class PerMatchStats(View):
     template_name = 'predictor/stats/per_match.html'
@@ -1180,20 +1058,20 @@ class PerMatchStats(View):
             'matches':'none'
         }
 
-        return render(request,self.template_name,context)
+        
         matches = Match.objects.values()
 
         users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon').values()
 
 
-        scores = Prediction.objects.select_related().values()#.order_by('match_choice__match_number').values()
+        scores = Prediction.objects.select_related().values('country','match_choice__match_number','match_choice__group','score','user_id','points','exact','actual','user__username','match_choice__id')
 
 
-        actual_matches = Prediction.objects.order_by('match_choice__match_number').filter(user__username='Actual_Scores').values()
+        actual_matches = Prediction.objects.order_by('match_choice__match_number').filter(user__username='Actual_Scores').values('country','match_choice__match_number','match_choice__group','score','user_id','points','exact','actual','user__username')
         
-        grouped = [[[score for score in scores if score['user_id'] == user['id'] and score['match_choice_id'] == event['id']] for user in users] for event in matches]
+        grouped = [[[score for score in scores if score['user_id'] == user['id'] and score['match_choice__match_number'] == event['match_number']] for user in users] for event in matches]
         # grouped = [[[print(event) for score in scores]for user in users] for event in matches]
-  
+        actual_grouped = [[score for score in actual_matches if  score['match_choice__match_number'] == event['match_number']] for event in matches]
         dataset = []
         for index, match in enumerate(grouped):
             temp_total = []
@@ -1247,22 +1125,22 @@ class PerMatchStats(View):
                         gd = 0
                         exact = 0
                     temp_points.append([wrong,right,gd,exact])
-                    # if Prediction.objects.filter(user__username='Actual_Scores',match_choice=user_pred[0]['match_choice_id']).values()[0]['score'] != None:
-                    #     x = abs(Prediction.objects.filter(user__username='Actual_Scores',match_choice=user_pred[0]['match_choice_id']).values()[0]['score'] - user_pred[0]['score'])
-                    #     y = abs(Prediction.objects.filter(user__username='Actual_Scores',match_choice=user_pred[1]['match_choice_id']).values()[0]['score'] - user_pred[1]['score'])
-                    #     taxi_diff = x+y
-                    #     temp_taxi.append(taxi_diff)
-                    # temp_score.append([user_pred[0]['score'],user_pred[1]['score']])
+                    if actual_grouped[index][0]['score'] != None:
+                        x = abs(actual_grouped[index][0]['score'] - user_pred[0]['score'])
+                        y = abs(actual_grouped[index][1]['score'] - user_pred[1]['score'])
+                        taxi_diff = x+y
+                        temp_taxi.append(taxi_diff)
+                    temp_score.append([user_pred[0]['score'],user_pred[1]['score']])
 
             points_row = [sum(col) for col in zip(*temp_points)]
             avg = [round(float(sum(col))/len(col)*100) for col in zip(*temp_total)]
             avg_score = [round(float(sum(col))/len(col),2) for col in zip(*temp_score)]
-            # try:
-            #     avg_taxi = round(sum(temp_taxi)/len(temp_taxi),2)
-            # except:
-            #     avg_taxi = ''
-            # dataset.append([avg,[actual_matches[index*2],actual_matches[index*2+1]],points_row,avg_taxi,avg_score])
-            dataset.append([avg,[actual_matches[index*2],actual_matches[index*2+1]],points_row,'hi',avg_score])
+            try:
+                avg_taxi = round(sum(temp_taxi)/len(temp_taxi),2)
+            except:
+                avg_taxi = ''
+            dataset.append([avg,[actual_matches[index*2],actual_matches[index*2+1]],points_row,avg_taxi,avg_score])
+            # dataset.append([avg,[actual_matches[index*2],actual_matches[index*2+1]],points_row,'hi',avg_score])
 
         context = {
             'matches':dataset
