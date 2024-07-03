@@ -954,42 +954,43 @@ class PerPlayerStats(View):
                     away_wins += 1 
                 else:
                     draws += 1
-                try:
-                    if match[0]['match_choice__group'] == 1:
-                        try:
-                            a_points += match[0]['points']
-                        except:
-                            a_points = a_points
-                    elif match[0]['match_choice__group'] == 2:
-                        try:
-                            b_points += match[0]['points']
-                        except:
-                            b_points = b_points
-                    elif match[0]['match_choice__group'] == 3:
-                        try:
-                            c_points += match[0]['points']
-                        except:
-                            c_points = c_points
-                    elif match[0]['match_choice__group'] == 4:
-                        try:
-                            d_points += match[0]['points']
-                        except:
-                            d_points = d_points
-                    elif match[0]['match_choice__group'] == 5:
-                        try:
-                            e_points += match[0]['points']
-                        except:
-                            e_points = e_points
-                    elif match[0]['match_choice__group'] == 6:
-                        try:
-                            f_points += match[0]['points']
-                        except:
-                            f_points = f_points
-                except:
+
+                if match[0]['match_choice__group'] == 1:
+                    try:
+                        a_points += match[0]['points']
+                    except:
+                        a_points = a_points
+                elif match[0]['match_choice__group'] == 2:
+                    try:
+                        b_points += match[0]['points']
+                    except:
+                        b_points = b_points
+                elif match[0]['match_choice__group'] == 3:
+                    try:
+                        c_points += match[0]['points']
+                    except:
+                        c_points = c_points
+                elif match[0]['match_choice__group'] == 4:
+                    try:
+                        d_points += match[0]['points']
+                    except:
+                        d_points = d_points
+                elif match[0]['match_choice__group'] == 5:
+                    try:
+                        e_points += match[0]['points']
+                    except:
+                        e_points = e_points
+                elif match[0]['match_choice__group'] == 6:
+                    try:
+                        f_points += match[0]['points']
+                    except:
+                        f_points = f_points
+                else:
                     try:
                         finals_points += match[0]['points']
                     except:
                         finals_points = finals_points
+                
 
                     
                     
