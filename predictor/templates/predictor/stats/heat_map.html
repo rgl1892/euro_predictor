@@ -1,6 +1,7 @@
 {% extends 'predictor/base.html' %}
 {% block content %}
 {% load static %}
+
 <script src="{% static 'predictor/js/d3.v7.js' %}" ></script>
 <div class="container">
     <div class="row">
@@ -26,7 +27,8 @@
                 >
                     <option selected value=''>All</option>
                     {% for match in teams_per_match %}
-                    <option value='{{match.0.match_choice.match_number}}'>{{match.0.match_choice.match_number}}: {{match.0.country}} vs {{match.1.country}}</option>
+                    
+                    <option value='{{match.0.match_choice__match_number}}'>{{match.0.match_choice__country__name}} vs {{match.1.match_choice__country__name}}</option>
                     {% endfor %}
                 </select>
             </div>

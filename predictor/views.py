@@ -865,15 +865,22 @@ class HeatView(View):
 
     def get(self,request):
         users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
-        matches = Match.objects.all()
-        teams_per_match = [Prediction.objects.filter(user__username='Actual_Scores',match_choice__match_number=item.match_number) for item in matches]
+        matches = Match.objects.values()
+        actual_id = User.objects.filter(username='Actual_Scores').values()[0]['id']
+
+        predictions = Prediction.objects.values('match_choice__country__name','match_choice__match_number','user')
+
+        
+        teams_per_match = [[prediction for prediction in predictions if prediction['match_choice__match_number'] == item['match_number'] and prediction['user'] == actual_id] for item in matches]
+        print(teams_per_match)
+
         context = {
             'users':users,
             'teams_per_match':teams_per_match,
         }
     
         return render(request,self.template_name,context)
-    
+        
 class AccountView(View):
 
     template_name = 'predictor/login/account.html'
