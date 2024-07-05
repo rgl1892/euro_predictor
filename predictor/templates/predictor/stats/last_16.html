@@ -1,0 +1,306 @@
+{% extends 'predictor/base.html' %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-3 16">
+                <h2 class="knockouts">Last 16</h2>
+
+            <div class="row match">
+                <div class="actual">
+                    {{actual.0.0.0}} VS {{actual.1.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.0 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.1 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+             
+            <div class="row match">
+                <div class="actual">
+                    {{actual.2.0.0}} VS {{actual.3.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.2 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.3 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row match">
+                <div class="actual">
+                    {{actual.4.0.0}} VS {{actual.5.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.4 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.5 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row match">
+                <div class="actual">
+                    {{actual.6.0.0}} VS {{actual.7.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.6 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.7 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row match">
+                <div class="actual">
+                    {{actual.8.0.0}} VS {{actual.9.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.8 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.9 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row match">
+                <div class="actual">
+                    {{actual.10.0.0}} VS {{actual.11.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.10 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.11 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row match">
+                <div class="actual">
+                    {{actual.12.0.0}} VS {{actual.13.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.12 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.13 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row match">
+                <div class="actual">
+                    {{actual.14.0.0}} VS {{actual.15.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.14 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.15 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-3 quarters">
+            <h2 class="knockouts">Quarters</h2>
+
+            <div class="row match">
+                <div class="actual">
+                    {{actual.16.0.0}} VS {{actual.17.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.16 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.17 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+             
+            <div class="row match">
+                <div class="actual">
+                    {{actual.18.0.0}} VS {{actual.19.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.18 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.19 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row match">
+                <div class="actual">
+                    {{actual.20.0.0}} VS {{actual.21.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.20 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.21 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row match">
+                <div class="actual">
+                    {{actual.22.0.0}} VS {{actual.23.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.22 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.23 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-3 semi">
+            <h2 class="knockouts">Semis</h2>
+
+            <div class="row match">
+                <div class="actual">
+                    {{actual.24.0.0}} VS {{actual.25.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.24 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.25 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+             
+            <div class="row match">
+                <div class="actual">
+                    {{actual.26.0.0}} VS {{actual.27.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.26 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.27 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-3 Final">
+            <h2 class="knockouts">Final</h2>
+            <div class="row match">
+                <div class="actual">
+                    {{actual.28.0.0}} VS {{actual.29.0.0}}
+                </div>
+                <div class="team_0 col-5">
+                    {% for x in country.28 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+                <div class="VS col-2">
+                    VS
+                </div> 
+                <div class="team_1 col-5">
+                    {% for x in country.29 %}
+                    {{x.0}}: {{x.1}}<br>
+                    {% endfor %}
+                </div>
+            </div>
+             
+        </div>
+    </div>
+    </div>
+    
+
+{% endblock content %}

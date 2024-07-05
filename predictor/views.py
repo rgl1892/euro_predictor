@@ -14,7 +14,6 @@ from statistics import mean
 from .forms import EditAuthForm,EditUserForm,AccountForm
 from .models import Country,Group,Score,Prediction,Match,Winner
 
-PREDICTION_KEY = 'predictions.all'
 
 def create_user_predictions(request):
     matches = Score.objects.all()
@@ -1241,6 +1240,24 @@ class TestStats(View):
         
         context = {
             'grouped':grouped
+        }
+
+        return render(request,self.template_name,context)
+    
+class LastSixteenView(View):
+
+    template_name = 'predictor/stats/last_16.html'   
+
+    def get(self, request):
+        all_predictions = Prediction.objects.exclude(user__username='Actual_Scores').exclude(user__username='richardlongdon').values('country','match_choice')
+        actual =  Prediction.objects.filter(user__username='Actual_Scores').values('country','match_choice')
+        matches = Score.objects.filter(stage='Finals').values()
+
+        country = [list(sorted(Counter([score['country'] for score in all_predictions if score['match_choice'] == event['id'] ]).items(),key=lambda x:x[1],reverse=True)) for event in matches ]
+        actual = [list(Counter([score['country'] for score in actual if score['match_choice'] == event['id'] ]).items()) for event in matches ]
+        context = {
+            'country':country,
+            'actual':actual
         }
 
         return render(request,self.template_name,context)
