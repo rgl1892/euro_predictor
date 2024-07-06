@@ -197,6 +197,7 @@
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
                         <h6 class="card-title text-center">{{match.0.match_choice.date|timezone:"Europe/London"}}</h5>
+                        <h6 class="card-title text-center">{% if match.0.points != None %}{{match.0.points}} Points{% endif %}</h5>
                         <div class="d-flex justify-content-center">
                             <div>
                                 {% if match.0.score != None %}
@@ -266,6 +267,7 @@
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
                         <h6 class="card-title text-center">{{match.0.match_choice.date|timezone:"Europe/London"}}</h5>
+                            <h6 class="card-title text-center">{% if match.0.points != None %}{{match.0.points}} Points{% endif %}</h5>
                         <div class="d-flex justify-content-center">
                             <div>
                                 {% if match.0.score != None %}
@@ -336,6 +338,7 @@
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title text-center">{{match.0.country}} vs {{match.1.country}}</h5>
                             <h6 class="card-title text-center">{{match.0.match_choice.date|timezone:"Europe/London"}}</h5>
+                                <h6 class="card-title text-center">{% if match.0.points != None %}{{match.0.points}} Points{% endif %}</h5>
                             <div class="d-flex justify-content-center">
                                 <div>
                                     {% if match.0.score != None %}
