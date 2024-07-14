@@ -26,9 +26,9 @@ def create_51_matches():
 def check_user_points(request):
 
     filled_in_scores = Prediction.objects.filter(actual='Actual').exclude(score__isnull=True)
-    per_match = [[item for item in Prediction.objects.filter(actual='Actual',match_choice__match_number=x).exclude(score__isnull=True)] for x in range(1,51)]
+    per_match = [[item for item in Prediction.objects.filter(actual='Actual',match_choice__match_number=x).exclude(score__isnull=True)] for x in range(1,53)]
     users = User.objects.exclude(username='Actual_Scores').exclude(username='richardlongdon')
-    per_match_users =[[[item for item in Prediction.objects.filter(user=user,match_choice__match_number=x).exclude(score__isnull=True)] for x in range(1,51)] for user in users]
+    per_match_users =[[[item for item in Prediction.objects.filter(user=user,match_choice__match_number=x).exclude(score__isnull=True)] for x in range(1,53)] for user in users]
     for user_row in per_match_users:
         if user_row[0] != []:
             for index,matches in enumerate(user_row):
